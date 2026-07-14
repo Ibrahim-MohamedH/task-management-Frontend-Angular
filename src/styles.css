@@ -1,3 +1,687 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-bg: rgb(var(--bg));
+  --color-surface: rgb(var(--surface));
+  --color-surface-2: rgb(var(--surface-2));
+
+  --color-border: rgb(var(--border));
+  --color-border-strong: rgb(var(--border-strong));
+
+  --color-text: rgb(var(--text));
+  --color-text-muted: rgb(var(--text-muted));
+  --color-text-faint: rgb(var(--text-faint));
+
+  --color-brand: rgb(var(--brand));
+  --color-brand-2: rgb(var(--brand-2));
+  --color-brand-soft: rgb(var(--brand-soft));
+
+  --color-amber: rgb(var(--amber));
+  --color-amber-soft: rgb(var(--amber-soft));
+
+  --color-danger: rgb(var(--danger));
+  --color-danger-soft: rgb(var(--danger-soft));
+
+  --color-info: rgb(var(--info));
+  --color-info-soft: rgb(var(--info-soft));
+
+  --color-violet: rgb(var(--violet));
+  --color-violet-soft: rgb(var(--violet-soft));
+
+  --shadow-soft: 0 1px 2px rgba(0,0,0,.04),
+                 0 4px 16px -4px rgba(0,0,0,.06);
+}
+:root {
+  --bg: 247 247 245;
+  --surface: 255 255 255;
+  --surface-2: 241 240 237;
+  --surface-input: 241 240 237;
+  --border: 229 227 222;
+  --border-strong: 214 211 204;
+  --text: 28 27 26;
+  --text-muted: 107 105 99;
+  --text-faint: 154 151 143;
+
+  --brand: 23 107 82;
+  --brand-2: 34 138 106;
+  --brand-soft: 227 240 234;
+  --brand-contrast: 255 255 255;
+
+  --amber: 201 122 43;
+  --amber-soft: 246 232 215;
+
+  --danger: 193 67 47;
+  --danger-soft: 248 226 219;
+
+  --info: 37 99 172;
+  --info-soft: 222 233 245;
+
+  --violet: 99 91 188;
+  --violet-soft: 231 228 247;
+
+  --shadow-color: 28 27 26;
+  --ring: 23 107 82;
+
+  --sidebar-w: 280px;
+  --sidebar-w-collapsed: 80px;
+  --topbar-h: 72px;
+}
+
+.dark {
+  --bg: 14 18 16;
+  --surface: 21 26 23;
+  --surface-2: 27 33 29;
+  --surface-input: 47 55 50;
+  --border: 38 46 41;
+  --border-strong: 49 58 52;
+  --text: 237 239 236;
+  --text-muted: 154 163 156;
+  --text-faint: 110 119 112;
+
+  --brand: 52 200 150;
+  --brand-2: 74 214 167;
+  --brand-soft: 24 47 39;
+  --brand-contrast: 8 16 13;
+
+  --amber: 226 158 84;
+  --amber-soft: 46 36 23;
+
+  --danger: 224 110 92;
+  --danger-soft: 47 25 22;
+
+  --info: 96 161 224;
+  --info-soft: 21 35 49;
+
+  --violet: 154 146 230;
+  --violet-soft: 35 31 54;
+
+  --shadow-color: 0 0 0;
+  --ring: 52 200 150;
+}
+
+* {
+  border-color: rgb(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.font-mono-data {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Focus rings — accessible & on-brand
+   ========================================================================== */
+
+/* :focus-visible {
+  outline: 2px solid rgb(var(--ring));
+  outline-offset: 2px;
+  border-radius: 6px;
+} */
+
+button,
+a,
+input,
+select,
+textarea,
+[tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   Custom scrollbar
+   ========================================================================== */
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--border-strong)) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--border-strong));
+  border-radius: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(var(--text-faint));
+}
+/* ==========================================================================
+   Surfaces / cards
+   ========================================================================== */
+.surface {
+  background-color: rgb(var(--surface));
+  border: 1px solid rgb(var(--border));
+}
+
+.surface-2 {
+  background-color: rgb(var(--surface-2));
+}
+
+.card-shadow {
+  box-shadow: 0 1px 2px rgba(var(--shadow-color) / 0.04),
+              0 4px 16px -4px rgba(var(--shadow-color) / 0.06);
+}
+
+.card-shadow-lg {
+  box-shadow: 0 8px 24px -8px rgba(var(--shadow-color) / 0.12),
+              0 2px 6px -2px rgba(var(--shadow-color) / 0.06);
+}
+
+/* Glassmorphism — used sparingly on the topbar + drawer overlay panel */
+.glass {
+  background-color: rgba(var(--surface) / 0.72);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
+#sidebar {
+  width: var(--sidebar-w);
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar.collapsed {
+  width: var(--sidebar-w-collapsed);
+}
+
+#sidebar.collapsed .sidebar-label,
+#sidebar.collapsed .sidebar-section-label,
+#sidebar.collapsed .sidebar-logo-text {
+  display: none;
+  pointer-events: none;
+}
+
+.sidebar-label,
+.sidebar-section-label {
+  transition: opacity 0.15s ease, width 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.nav-item {
+  position: relative;
+  border-radius: 10px;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.nav-item:hover {
+  background-color: rgb(var(--surface-2));
+}
+
+.nav-item.active {
+  background-color: rgb(var(--brand-soft));
+  color: rgb(var(--brand));
+}
+
+.nav-item.active .nav-icon {
+  color: rgb(var(--brand));
+}
+
+/* Active page indicator — signature element: a soft glowing jade rail */
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: 4px;
+  background: rgb(var(--brand));
+  box-shadow: 0 0 10px 1px rgba(var(--brand) / 0.55);
+}
+
+#sidebar.collapsed .nav-item.active::before {
+  inset-inline-start: -8px;
+}
+#sidebar.collapsed .nav-item{
+  justify-content: center;
+}
+
+/* Tooltip shown on collapsed sidebar hover */
+.nav-tooltip {
+  position: absolute;
+  inset-inline-start: calc(100% + 13px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  background-color: rgb(var(--text));
+  color: rgb(var(--bg));
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 60;
+  pointer-events: none;
+}
+
+#sidebar.collapsed .nav-item:hover .nav-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Mobile drawer */
+#mobile-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+#mobile-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+#sidebar.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[lang='ar']{
+#sidebar.mobile-drawer {
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+}
+
+#sidebar.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+
+/* ==========================================================================
+   Topbar
+   ========================================================================== */
+
+#topbar {
+  height: var(--topbar-h);
+}
+.tf-input {
+  background-color: rgb(var(--surface-input));
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, width 0.25s ease;
+}
+
+.tf-input:focus {
+  background-color: rgb(var(--surface));
+  box-shadow: 0 0 0 3px rgba(var(--brand) / 0.18);
+}
+
+/* ==========================================================================
+   Buttons & interactive
+   ========================================================================== */
+
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.45);
+  transform: scale(0);
+  animation: ripple 0.6s ease-out;
+  pointer-events: none;
+}
+
+.dark .ripple-effect {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.icon-rotate {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-rotate.rotated {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   Dropdown / popover animation
+   ========================================================================== */
+
+.dropdown-panel {
+  transform-origin: top right;
+  transform: scale(0.96) translateY(-6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.14s ease, visibility 0.14s ease;
+}
+
+.dropdown-panel.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ==========================================================================
+   Badges
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  line-height: 1.5;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.badge-status-todo { background-color: rgb(var(--surface-2)); color: rgb(var(--text-muted)); }
+.badge-status-todo .badge-dot { background-color: rgb(var(--text-faint)); }
+
+.badge-status-progress { background-color: rgb(var(--info-soft)); color: rgb(var(--info)); }
+.badge-status-progress .badge-dot { background-color: rgb(var(--info)); }
+
+.badge-status-review { background-color: rgb(var(--violet-soft)); color: rgb(var(--violet)); }
+.badge-status-review .badge-dot { background-color: rgb(var(--violet)); }
+
+.badge-status-completed { background-color: rgb(var(--brand-soft)); color: rgb(var(--brand)); }
+.badge-status-completed .badge-dot { background-color: rgb(var(--brand)); }
+
+.badge-priority-low { background-color: rgb(var(--surface-2)); color: rgb(var(--text-muted)); }
+.badge-priority-medium { background-color: rgb(var(--amber-soft)); color: rgb(var(--amber)); }
+.badge-priority-high { background-color: rgb(var(--danger-soft)); color: rgb(var(--danger)); }
+.badge-priority-urgent { background-color: rgb(var(--danger)); color: rgb(var(--brand-contrast)); }
+
+/* ==========================================================================
+   Progress bars / rings
+   ========================================================================== */
+
+.progress-track {
+  background-color: rgb(var(--surface-2));
+  border-radius: 999px;
+  overflow: hidden;
+  height: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Stat-card accent ring — signature decorative motif */
+.stat-ring-icon {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-ring-icon::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 16px;
+  border: 1px solid currentColor;
+  opacity: 0;
+  transition: opacity 0.25s ease, inset 0.25s ease;
+}
+
+.tf-card:hover .stat-ring-icon::after {
+  opacity: 0.35;
+  inset: -6px;
+}
+
+/* ==========================================================================
+   Skeleton loaders
+   ========================================================================== */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: rgb(var(--surface-2));
+  border-radius: 8px;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(var(--text-faint) / 0.18), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ==========================================================================
+   Kanban
+   ========================================================================== */
+
+.kanban-column {
+  min-width: 280px;
+}
+
+.kanban-card {
+  cursor: grab;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  border-color: rgb(var(--border-strong));
+}
+
+.kanban-card.dragging {
+  opacity: 0.5;
+}
+
+.kanban-drop-zone.drag-over {
+  background-color: rgb(var(--brand-soft));
+  outline: 2px dashed rgba(var(--brand) / 0.4);
+  outline-offset: -4px;
+}
+
+/* ==========================================================================
+   Timeline (Upcoming deadlines)
+   ========================================================================== */
+
+.timeline-line {
+  position: absolute;
+  inset-inline-start: 15px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background-color: rgb(var(--border));
+}
+
+.timeline-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   Avatar stack
+   ========================================================================== */
+
+.avatar {
+  border: 2px solid rgb(var(--surface));
+  border-radius: 50%;
+  position: relative;
+}
+
+.avatar-status {
+  position: absolute;
+  bottom: -1px;
+  inset-inline-end: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid rgb(var(--surface));
+}
+
+.avatar-status.online { background-color: #22c55e; }
+.avatar-status.away { background-color: rgb(var(--amber)); }
+.avatar-status.offline { background-color: rgb(var(--text-faint)); }
+
+/* ==========================================================================
+   Table
+   ========================================================================== */
+
+.task-row {
+  transition: background-color 0.15s ease;
+}
+
+.task-row:hover {
+  background-color: rgb(var(--surface-2));
+}
+
+/* ==========================================================================
+   Toast notifications
+   ========================================================================== */
+
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  inset-inline-end: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  animation: toast-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.toast.closing {
+  animation: toast-out 0.2s ease forwards;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(30px) scale(0.95); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes toast-out {
+  to { opacity: 0; transform: translateX(30px) scale(0.95); }
+}
+
+/* ==========================================================================
+   Scroll to top
+   ========================================================================== */
+
+#scroll-top-btn {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+#scroll-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Generic fade/slide-in utilities
+   ========================================================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in { animation: fade-in 0.35s ease both; }
+.animate-slide-up { animation: slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.animate-scale-in { animation: scale-in 0.2s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+.stagger > * { opacity: 0; }
+
+/* Empty state illustration spin */
+@keyframes drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.drift { animation: drift 4s ease-in-out infinite; }

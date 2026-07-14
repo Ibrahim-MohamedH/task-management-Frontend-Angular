@@ -1,0 +1,126 @@
+<section class="surface rounded-2xl card-shadow animate-slide-up" aria-label="Kanban board preview">
+  <div class="flex flex-wrap gap-2 items-center justify-between px-5 py-4 border-b">
+    <h3 class="font-bold text-[15px]">
+      <span
+        [innerHTML]="appService.getIcon('clipboardListCheck')"
+        class="text-2xl inline-flex items-center justify-center text-blue-800 bg-blue-500/50 dark:text-blue-700 dark:bg-blue-300/80 p-2.5 rounded-xl"
+      ></span>
+      {{ 'Tasks For' | translate }}: {{ project()?.name }}
+    </h3>
+    <!-- New Task -->
+    <button
+      id="new-project-btn"
+      class="flex items-center gap-2 bg-brand cursor-pointer text-sm font-semibold rounded-xl px-4 py-2 hover:bg-brand-2 active:scale-[0.97] transition-all duration-150 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.12)]"
+      style="color: rgb(var(--brand-contrast))"
+      (click)="openTaskDialog()"
+    >
+      <span
+        [innerHTML]="appService.getIcon('plusSolid')"
+        class="flex items-center justify-center w-4 h-4"
+      ></span>
+      <span class="hidden sm:inline">{{ 'New Task' | translate }}</span>
+    </button>
+  </div>
+  <div class="p-5 overflow-x-auto scrollbar-thin">
+    <div class="flex gap-4" id="kanban-board">
+      @for (col of kanbanColumns(); track $index) {
+        <div class="kanban-column flex-1 py-2 px-1 rounded-md">
+          <div class="flex items-center gap-2 mb-3 px-1">
+            <span class="w-2 h-2 rounded-full bg-{{ col.dot }}"></span>
+            <h4 class="text-sm font-bold">{{ col.label | translate }}</h4>
+            <!-- <span class="text-xs text-text-faint font-mono-data">col.items.length</span> -->
+          </div>
+          <div
+            class="kanban-drop-zone space-y-3 min-h-30 rounded-xl p-1.5 transition-colors border"
+            data-col="key"
+            (dragenter)="onDragEnter(col.status)"
+            (dragleave)="onDragLeave(col.status)"
+            (dragover)="onDragOver($event)"
+            (drop)="onDrop(col.status)"
+            [class.drag-over]="dragOverColumn() === col.status"
+          >
+            @for (task of getTasks(col.status); track $index) {
+              <!-- Kaban card start -->
+              <div
+                class="kanban-card surface border rounded-xl p-3.5 card-shadow"
+                draggable="true"
+                (dragstart)="onDragStart(task)"
+                (dragend)="onDragEnd()"
+                [class.opacity-50]="draggedTask() == task"
+                data-id="t.id"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="badge badge-priority-{{ task.priority }} capitalize">{{
+                    task.priority | translate
+                  }}</span>
+                  <span class="text-xs font-bold font-mono-data">{{ $index + 1 }}</span>
+                </div>
+                <div class="flex flex-wrap items-center justify-between mb-3">
+                  <h4 class="text-lg font-semibold leading-snug">{{ task.title }}</h4>
+                  <div class="flex items-center gap-1">
+                    <button
+                      class="flex items-center text-amber-soft gap-2 bg-amber cursor-pointer text-sm font-semibold rounded-xl px-3 py-3 hover:bg-amber-700 active:scale-[0.97] transition-all duration-150"
+                      (click)="editTask(task._id)"
+                    >
+                      <span
+                        [innerHTML]="appService.getIcon('pen')"
+                        class="flex items-center justify-center w-2 h-2"
+                      ></span>
+                    </button>
+                    <button
+                      id="delete-project-btn"
+                      class="flex items-center text-white gap-2 bg-danger cursor-pointer text-sm font-semibold rounded-xl px-3 py-3 hover:bg-red-700 active:scale-[0.97] transition-all duration-150"
+                      (click)="deleteTask(task._id); $event.stopPropagation()"
+                    >
+                      <span
+                        [innerHTML]="appService.getIcon('trash')"
+                        class="flex items-center justify-center w-2 h-2"
+                      ></span>
+                    </button>
+                  </div>
+                </div>
+                @if (task.description) {
+                  <p
+                    class="text-sm font-semibold leading-snug mb-3 p-2 border border-dashed border-black/60! dark:border-white/60! rounded-sm"
+                  >
+                    {{ task.description }}
+                  </p>
+                }
+                <div class="flex items-center justify-between">
+                  @if (task.dueDate) {
+                    <span class="text-xs text-text-muted font-mono-data flex items-center gap-1">
+                      <i data-lucide="calendar" class="w-3.5 h-3.5"></i
+                      >{{ task.dueDate | date:'MMM dd, yyyy' }}
+                    </span>
+                  }
+
+                  <div class="flex items-center gap-2.5">
+                    <div
+                      class="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
+                      [class]="getUserAvatarClass(task.createdBy._id)"
+                    >
+                      {{ getUserInitials(task.createdBy.name) }}
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                      <span
+                        class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate leading-tight"
+                      >
+                        {{ task.createdBy.name }}
+                      </span>
+                      <span class="text-xs text-gray-400 dark:text-gray-500 truncate">
+                        {{ task.createdBy.email }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- kaban card end -->
+            } @empty {
+              <p class="text-center">{{ 'No tasks here' | translate }}</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

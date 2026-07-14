@@ -1,0 +1,748 @@
+<div class="min-h-screen transition-colors duration-200">
+  <div class="max-w-350 mx-auto space-y-8">
+    <!-- ══════════════════════════════════════════════════════════════════════
+         Page Header
+         ══════════════════════════════════════════════════════════════════════ -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <!-- Page icon -->
+          <div
+            class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center"
+          >
+            <span
+              [innerHTML]="appService.getIcon('wavePulse')"
+              class="flex items-center justify-center w-5 h-5 text-emerald-600 dark:text-emerald-400"
+            ></span>
+          </div>
+          <h1 class="text-2xl font-extrabold text-gray-900 dark:text-gray-50 tracking-tight">
+            {{ 'Activity Logs' | translate }}
+          </h1>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 ml-12">
+          {{ 'Monitor every change made across your projects and tasks.' | translate }}
+        </p>
+      </div>
+
+      <!-- Log count + refresh -->
+      <div class="flex flex-wrap items-center gap-3 self-start sm:self-center">
+        @if (!loading()) {
+          <div
+            class="flex items-center gap-2 px-3.5 py-2 rounded-xl surface border border-gray-100 dark:border-gray-700/50 shadow-sm"
+          >
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">
+              {{ activityLogs().length }}
+            </span>
+            <span class="text-sm text-gray-400 dark:text-gray-500">
+              {{ 'of' | translate }} {{ pagination().totalRecords }} {{ 'logs' | translate }}
+            </span>
+          </div>
+        }
+        <button
+          type="button"
+          class="flex items-center gap-2 px-4 py-2 rounded-xl surface border border-gray-100 dark:border-gray-700/50 shadow-sm text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-white active:scale-95 transition-all duration-150"
+          (click)="refresh()"
+          [disabled]="loading()"
+        >
+          <span
+            [innerHTML]="appService.getIcon('arrowsRotate')"
+            class="w-4 h-4 transition-transform duration-500 flex items-center justify-center"
+          ></span>
+          {{ 'Refresh' | translate }}
+        </button>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         Filter Toolbar
+         ══════════════════════════════════════════════════════════════════════ -->
+    <section
+      class="surface rounded-2xl border shadow-sm overflow-visible"
+      aria-label="Filter activity logs"
+    >
+      <!-- Toolbar top row (always visible) -->
+      <div class="flex items-center justify-between gap-3 px-4 sm:px-5 py-4">
+        <!-- Desktop filter controls -->
+        <div class="hidden lg:flex items-center gap-2 flex-wrap">
+          <!-- Entity type pills -->
+          <div
+            class="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-mist-800"
+            role="group"
+            aria-label="Filter by entity type"
+          >
+            <button
+              type="button"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer"
+              [class.bg-white]="entityTypeFilter() === 'all'"
+              [class.dark:bg-gray-700]="entityTypeFilter() === 'all'"
+              [class.text-gray-800]="entityTypeFilter() === 'all'"
+              [class.dark:text-white]="entityTypeFilter() === 'all'"
+              [class.shadow-sm]="entityTypeFilter() === 'all'"
+              [class.text-gray-500]="entityTypeFilter() !== 'all'"
+              [class.dark:text-gray-400]="entityTypeFilter() !== 'all'"
+              [class.hover:text-gray-800]="entityTypeFilter() !== 'all'"
+              (click)="setEntityType('all')"
+              aria-pressed="{{ entityTypeFilter() === 'all' }}"
+            >
+              {{ 'All' | translate }}
+            </button>
+            <button
+              type="button"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer"
+              [class.bg-white]="entityTypeFilter() === 'project'"
+              [class.dark:bg-gray-700]="entityTypeFilter() === 'project'"
+              [class.text-emerald-600]="entityTypeFilter() === 'project'"
+              [class.dark:text-emerald-400]="entityTypeFilter() === 'project'"
+              [class.shadow-sm]="entityTypeFilter() === 'project'"
+              [class.text-gray-500]="entityTypeFilter() !== 'project'"
+              [class.dark:text-gray-400]="entityTypeFilter() !== 'project'"
+              (click)="setEntityType('project')"
+              aria-pressed="{{ entityTypeFilter() === 'project' }}"
+            >
+              <span
+                [innerHTML]="appService.getIcon('folder')"
+                class="flex items-center justify-center"
+              ></span>
+              {{ 'Projects' | translate }}
+            </button>
+            <button
+              type="button"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer"
+              [class.bg-white]="entityTypeFilter() === 'task'"
+              [class.dark:bg-gray-700]="entityTypeFilter() === 'task'"
+              [class.text-blue-600]="entityTypeFilter() === 'task'"
+              [class.dark:text-blue-400]="entityTypeFilter() === 'task'"
+              [class.shadow-sm]="entityTypeFilter() === 'task'"
+              [class.text-gray-500]="entityTypeFilter() !== 'task'"
+              [class.dark:text-gray-400]="entityTypeFilter() !== 'task'"
+              (click)="setEntityType('task')"
+              aria-pressed="{{ entityTypeFilter() === 'task' }}"
+            >
+              <span
+                [innerHTML]="appService.getIcon('clipboardcheck')"
+                class="flex items-center justify-center"
+              ></span>
+              {{ 'Tasks' | translate }}
+            </button>
+          </div>
+
+          <!-- Divider -->
+          <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+
+          <!-- Action filter pills -->
+          <div
+            class="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-mist-800"
+            role="group"
+            aria-label="Filter by action type"
+          >
+            @for (
+              opt of [
+                { val: 'all', label: 'All', cls: 'text-gray-800 dark:text-white' },
+                { val: 'created', label: 'Created', cls: 'text-emerald-600 dark:text-emerald-400' },
+                { val: 'updated', label: 'Updated', cls: 'text-blue-600 dark:text-blue-400' },
+                { val: 'deleted', label: 'Deleted', cls: 'text-red-500 dark:text-red-400' },
+              ];
+              track opt.val
+            ) {
+              <button
+                type="button"
+                class="px-3 py-1.5 rounded-lg cursor-pointer text-xs font-semibold transition-all duration-150"
+                [class.bg-white]="actionFilter() === opt.val"
+                [class.dark:bg-gray-700]="actionFilter() === opt.val"
+                [class.shadow-sm]="actionFilter() === opt.val"
+                [class.text-gray-500]="actionFilter() !== opt.val"
+                [class.dark:text-gray-400]="actionFilter() !== opt.val"
+                [attr.aria-pressed]="actionFilter() === opt.val"
+                (click)="setAction(opt.val)"
+              >
+                <span [class]="actionFilter() === opt.val ? opt.cls : ''">{{ opt.label | translate}}</span>
+              </button>
+            }
+          </div>
+
+          <!-- Divider -->
+          <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+
+          <!-- Project dropdown -->
+          <div class="relative" (clickOutside)="showProjectDropdown.set(false)">
+            <button
+              type="button"
+              class="flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all duration-150 min-w-32.5 justify-between bg-gray-100 dark:bg-mist-800"
+              [class.bg-emerald-50]="selectedProjectId()"
+              [class.dark:bg-emerald-950/40]="selectedProjectId()"
+              [class.border-emerald-200]="selectedProjectId()"
+              [class.dark:border-emerald-800/60]="selectedProjectId()"
+              [class.text-emerald-700]="selectedProjectId()"
+              [class.dark:text-emerald-400]="selectedProjectId()"
+              [class.bg-white]="!selectedProjectId()"
+              [class.dark:bg-gray-800/60]="!selectedProjectId()"
+              [class.border-gray-200]="!selectedProjectId()"
+              [class.dark:border-gray-700/60]="!selectedProjectId()"
+              [class.text-gray-600]="!selectedProjectId()"
+              [class.dark:text-gray-300]="!selectedProjectId()"
+              (click)="toggleProjectDropdown()"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="showProjectDropdown()"
+            >
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span
+                  [innerHTML]="appService.getIcon('folder')"
+                  class="w-3.5 h-3.5 shrink-0 flex items-center justify-center"
+                ></span>
+                <span class="truncate max-w-22.5">{{
+                  selectedProjectName() ?? ('Project' | translate)
+                }}</span>
+              </div>
+              @if (selectedProjectId()) {
+                <button
+                  type="button"
+                  class="ml-1 shrink-0 hover:text-red-500 transition-colors"
+                  (click)="$event.stopPropagation(); selectProject(null)"
+                  aria-label="Clear project filter"
+                >
+                  <span
+                    [innerHTML]="appService.getIcon('close')"
+                    class="w-3.5 h-3.5 flex items-center justify-center"
+                  ></span>
+                </button>
+              } @else {
+                <span
+                  [innerHTML]="appService.getIcon('chevronDown')"
+                  class="w-3.5 h-3.5 shrink-0 text-gray-400 flex items-center justify-center"
+                ></span>
+              }
+            </button>
+
+            <!-- Project dropdown panel -->
+            @if (showProjectDropdown()) {
+              <div
+                class="absolute top-full mt-1.5 left-0 z-50 w-56 bg-white dark:bg-mist-800 rounded-xl border border-gray-100 dark:border-gray-700/60 shadow-xl overflow-hidden"
+                role="listbox"
+                aria-label="Select project"
+              >
+                <div class="p-2 border-b border-gray-100 dark:border-gray-700/50">
+                  <input
+                    type="text"
+                    placeholder="Search projects…"
+                    [value]="projectSearch()"
+                    (input)="onProjectSearch($event)"
+                    class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700/60 text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    autofocus
+                  />
+                </div>
+                <div class="max-h-48 overflow-y-auto py-1">
+                  <!-- heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee -->
+                  @for (project of projects(); track project._id) {
+                    <button
+                      type="button"
+                      class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-left hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors duration-100"
+                      [class.text-emerald-600]="selectedProjectId() === project._id"
+                      [class.dark:text-emerald-400]="selectedProjectId() === project._id"
+                      [class.text-gray-700]="selectedProjectId() !== project._id"
+                      [class.dark:text-gray-300]="selectedProjectId() !== project._id"
+                      (click)="selectProject(project._id)"
+                      role="option"
+                      [attr.aria-selected]="selectedProjectId() === project._id"
+                    >
+                      <span
+                        [innerHTML]="appService.getIcon('folder')"
+                        class="w-3.5 h-3.5 text-emerald-500 shrink-0 flex items-center justify-center"
+                      ></span>
+                      <span class="truncate">{{ project.name }}</span>
+                      @if (selectedProjectId() === project._id) {
+                        <span
+                          [innerHTML]="appService.getIcon('success')"
+                          class="w-3.5 h-3.5 text-emerald-500 ms-auto shrink-0 flex items-center justify-center"
+                        ></span>
+                      }
+                    </button>
+                  }
+                  @if (filteredProjects().length === 0) {
+                    <p class="px-3 py-4 text-xs text-gray-400 dark:text-gray-500 text-center">
+                      {{ 'No projects found' | translate }}
+                    </p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Task dropdown -->
+          <div class="relative">
+            <button
+              type="button"
+              class="flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all duration-150 min-w-32.5 justify-between bg-gray-100 dark:bg-mist-800"
+              [class.bg-blue-50]="selectedTaskId()"
+              [class.dark:bg-blue-950/40]="selectedTaskId()"
+              [class.border-blue-200]="selectedTaskId()"
+              [class.dark:border-blue-800/60]="selectedTaskId()"
+              [class.text-blue-700]="selectedTaskId()"
+              [class.dark:text-blue-400]="selectedTaskId()"
+              [class.bg-white]="!selectedTaskId()"
+              [class.dark:bg-gray-800/60]="!selectedTaskId()"
+              [class.border-gray-200]="!selectedTaskId()"
+              [class.dark:border-gray-700/60]="!selectedTaskId()"
+              [class.text-gray-600]="!selectedTaskId()"
+              [class.dark:text-gray-300]="!selectedTaskId()"
+              (click)="toggleTaskDropdown()"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="showTaskDropdown()"
+            >
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span
+                  [innerHTML]="appService.getIcon('clipboardcheck')"
+                  class="w-3.5 h-3.5 shrink-0"
+                  flex
+                  items-center
+                  justify-center
+                ></span>
+                <span class="truncate max-w-22.5">{{ selectedTaskName() ?? 'Task' | translate }}</span>
+              </div>
+              @if (selectedTaskId()) {
+                <button
+                  type="button"
+                  class="ml-1 shrink-0 hover:text-red-500 transition-colors"
+                  (click)="$event.stopPropagation(); selectTask(null)"
+                  aria-label="Clear task filter"
+                >
+                  <span
+                    [innerHTML]="appService.getIcon('close')"
+                    class="w-3.5 h-3.5 flex items-center justify-center"
+                  ></span>
+                </button>
+              } @else {
+                <span
+                  [innerHTML]="appService.getIcon('chevronDown')"
+                  class="w-3.5 h-3.5 shrink-0 text-gray-400 flex items-center justify-center"
+                ></span>
+              }
+            </button>
+
+            <!-- Task dropdown panel -->
+            @if (showTaskDropdown()) {
+              <div
+                class="absolute top-full mt-1.5 left-0 z-50 w-64 bg-gray-100 dark:bg-mist-800 rounded-xl border border-gray-100 dark:border-gray-700/60 shadow-xl overflow-hidden"
+                role="listbox"
+                aria-label="Select task"
+              >
+                <div class="p-2 border-b border-gray-100 dark:border-gray-700/50">
+                  <input
+                    type="text"
+                    placeholder="Search tasks…"
+                    [value]="taskSearch()"
+                    (input)="onTaskSearch($event)"
+                    class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700/60 text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    autofocus
+                  />
+                </div>
+                <div class="max-h-48 overflow-y-auto py-1">
+                  @for (task of filteredTasks(); track task._id) {
+                    <button
+                      type="button"
+                      class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-left hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors duration-100"
+                      [class.text-blue-600]="selectedTaskId() === task._id"
+                      [class.dark:text-blue-400]="selectedTaskId() === task._id"
+                      [class.text-gray-700]="selectedTaskId() !== task._id"
+                      [class.dark:text-gray-300]="selectedTaskId() !== task._id"
+                      (click)="selectTask(task._id)"
+                      role="option"
+                      [attr.aria-selected]="selectedTaskId() === task._id"
+                    >
+                      <span
+                        [innerHTML]="appService.getIcon('clipboardcheck')"
+                        class="w-3.5 h-3.5 text-blue-500 shrink-0 flex items-center justify-center"
+                      ></span>
+                      <span class="truncate">{{ task.title }}</span>
+                      @if (selectedTaskId() === task._id) {
+                        <span
+                          [innerHTML]="appService.getIcon('success')"
+                          class="w-3.5 h-3.5 text-blue-500 shrink-0 ms-auto flex items-center justify-center"
+                        ></span>
+                      }
+                    </button>
+                  }
+                  @if (filteredTasks().length === 0) {
+                    <p class="px-3 py-4 text-xs text-gray-400 dark:text-gray-500 text-center">
+                      {{ 'No tasks found' | translate }}
+                    </p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Divider -->
+          <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+
+          <!-- Sort select -->
+          <select
+            [value]="sortOrder()"
+            class="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700/60 text-xs font-semibold surface text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 cursor-pointer transition-colors duration-150 dark:bg-mist-800! hover:bg-gray-50 dark:hover:bg-gray-700/60"
+            aria-label="Sort order"
+            (change)="setSortOrder($event)"
+          >
+            @for (option of sortOptions; track $index) {
+              <option value="{{ $index }}">{{ option.label | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Mobile: toggle filters button -->
+        <button
+          type="button"
+          class="lg:hidden flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all duration-150"
+          [class.bg-emerald-50]="hasActiveFilters()"
+          [class.dark:bg-emerald-950/40]="hasActiveFilters()"
+          [class.border-emerald-200]="hasActiveFilters()"
+          [class.dark:border-emerald-800/50]="hasActiveFilters()"
+          [class.text-emerald-700]="hasActiveFilters()"
+          [class.dark:text-emerald-400]="hasActiveFilters()"
+          [class.bg-white]="!hasActiveFilters()"
+          [class.dark:bg-gray-800/60]="!hasActiveFilters()"
+          [class.border-gray-200]="!hasActiveFilters()"
+          [class.dark:border-gray-700/60]="!hasActiveFilters()"
+          [class.text-gray-600]="!hasActiveFilters()"
+          [class.dark:text-gray-300]="!hasActiveFilters()"
+          (click)="toggleMobileFilters()"
+          [attr.aria-expanded]="showMobileFilters()"
+        >
+          <span
+            [innerHTML]="appService.getIcon('filter')"
+            class="w-3.5 h-3.5 flex items-center justify-center"
+          ></span>
+
+          {{ 'Filters' | translate }}
+          @if (hasActiveFilters()) {
+            <span
+              class="w-4 h-4 rounded-full bg-emerald-500 dark:bg-emerald-400 text-white dark:text-gray-900 text-[10px] font-bold flex items-center justify-center"
+              >!</span
+            >
+          }
+        </button>
+      </div>
+
+      <!-- Mobile filter panel (collapsible) -->
+      @if (showMobileFilters()) {
+        <div
+          class="lg:hidden px-4 pb-4 pt-0 border-t border-gray-100 dark:border-gray-700/50 space-y-3"
+        >
+          <!-- Entity type -->
+          <div>
+            <p
+              class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2"
+            >
+              {{ 'Entity' | translate }}
+            </p>
+            <div class="flex flex-wrap gap-2">
+              @for (
+                opt of [
+                  { val: 'all', label: 'All' },
+                  { val: 'project', label: 'Projects' },
+                  { val: 'task', label: 'Tasks' },
+                ];
+                track opt.val
+              ) {
+                <button
+                  type="button"
+                  class="px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150 cursor-pointer"
+                  [class.bg-emerald-50]="entityTypeFilter() === opt.val"
+                  [class.dark:bg-emerald-950/40]="entityTypeFilter() === opt.val"
+                  [class.border-emerald-300]="entityTypeFilter() === opt.val"
+                  [class.dark:border-emerald-700/60]="entityTypeFilter() === opt.val"
+                  [class.text-emerald-700]="entityTypeFilter() === opt.val"
+                  [class.dark:text-emerald-400]="entityTypeFilter() === opt.val"
+                  [class.bg-white]="entityTypeFilter() !== opt.val"
+                  [class.dark:bg-gray-800/60]="entityTypeFilter() !== opt.val"
+                  [class.border-gray-200]="entityTypeFilter() !== opt.val"
+                  [class.dark:border-gray-700/50]="entityTypeFilter() !== opt.val"
+                  [class.text-gray-600]="entityTypeFilter() !== opt.val"
+                  [class.dark:text-gray-400]="entityTypeFilter() !== opt.val"
+                  (click)="setEntityType(opt.val)"
+                >
+                  {{ opt.label | translate }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Action -->
+          <div>
+            <p
+              class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2"
+            >
+              {{ 'Action' | translate }}
+            </p>
+            <div class="flex flex-wrap gap-2">
+              @for (
+                opt of [
+                  { val: 'all', label: 'All', color: '' },
+                  { val: 'created', label: 'Created', color: 'emerald' },
+                  { val: 'updated', label: 'Updated', color: 'blue' },
+                  { val: 'deleted', label: 'Deleted', color: 'red' },
+                ];
+                track opt.val
+              ) {
+                <button
+                  type="button"
+                  class="px-3.5 py-1.5 rounded-full cursor-pointer text-xs font-semibold border transition-all duration-150"
+                  (click)="setAction(opt.val)"
+                  [class.border-gray-300]="actionFilter() === opt.val && !opt.color"
+                  [class.bg-gray-100]="actionFilter() === opt.val && !opt.color"
+                  [class.text-gray-700]="actionFilter() === opt.val && !opt.color"
+                  [class.bg-emerald-50]="actionFilter() === opt.val && opt.color === 'emerald'"
+                  [class.border-emerald-300]="actionFilter() === opt.val && opt.color === 'emerald'"
+                  [class.text-emerald-700]="actionFilter() === opt.val && opt.color === 'emerald'"
+                  [class.bg-blue-50]="actionFilter() === opt.val && opt.color === 'blue'"
+                  [class.border-blue-300]="actionFilter() === opt.val && opt.color === 'blue'"
+                  [class.text-blue-700]="actionFilter() === opt.val && opt.color === 'blue'"
+                  [class.bg-red-50]="actionFilter() === opt.val && opt.color === 'red'"
+                  [class.border-red-300]="actionFilter() === opt.val && opt.color === 'red'"
+                  [class.text-red-600]="actionFilter() === opt.val && opt.color === 'red'"
+                  [class.bg-white]="actionFilter() !== opt.val"
+                  [class.dark:bg-gray-800]="actionFilter() !== opt.val"
+                  [class.border-gray-200]="actionFilter() !== opt.val"
+                  [class.dark:border-gray-700]="actionFilter() !== opt.val"
+                  [class.text-gray-500]="actionFilter() !== opt.val"
+                  [class.dark:text-gray-400]="actionFilter() !== opt.val"
+                  (click)="setAction(opt.val)"
+                >
+                  {{ opt.label | translate }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Sort + Clear row -->
+          <div class="flex items-center justify-between gap-3">
+            <select
+              [value]="sortOrder()"
+              class="flex-1 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700/60 text-xs font-semibold surface text-gray-700 dark:text-gray-300 focus:outline-none cursor-pointer transition-colors duration-150"
+              (change)="setSortOrder($event)"
+            >
+              @for (option of sortOptions; track $index) {
+                <option value="{{ $index }}">{{ option.label | translate }}</option>
+              }
+            </select>
+
+            @if (hasActiveFilters()) {
+              <button
+                type="button"
+                class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-red-200 dark:border-red-900/50 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors duration-150"
+                (click)="clearAllFilters()"
+              >
+                <span
+                  [innerHTML]="appService.getIcon('close')"
+                  class="w-3.5 h-3.5 flex items-center justify-center"
+                ></span>
+                {{ 'Clear' | translate }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Active filter chips (desktop, when filters applied) -->
+      @if (hasActiveFilters()) {
+        <div class="hidden lg:flex items-center gap-2 px-5 pb-4 flex-wrap">
+          <span class="text-xs text-gray-400 dark:text-gray-500 mr-1"
+            >{{ 'Active' | translate }}:</span
+          >
+
+          @if (entityTypeFilter() !== 'all') {
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
+            >
+              {{ entityTypeFilter() | titlecase }}
+              <button
+                (click)="setEntityType('all')"
+                class="hover:opacity-70 transition-opacity"
+                aria-label="Remove entity type filter"
+              >
+                <span
+                  [innerHTML]="appService.getIcon('close')"
+                  class="w-3.5 h-3.5 flex items-center justify-center"
+                ></span>
+              </button>
+            </span>
+          }
+
+          @if (actionFilter() !== 'all') {
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50"
+            >
+              {{ actionFilter() | titlecase }}
+              <button
+                (click)="setAction('all')"
+                class="hover:opacity-70 transition-opacity"
+                aria-label="Remove action filter"
+              >
+                <span
+                  [innerHTML]="appService.getIcon('close')"
+                  class="w-3.5 h-3.5 flex items-center justify-center"
+                ></span>
+              </button>
+            </span>
+          }
+
+          @if (selectedProjectName()) {
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 max-w-45"
+            >
+              <span class="truncate">{{ selectedProjectName() }}</span>
+              <button
+                (click)="selectProject(null)"
+                class="hover:opacity-70 transition-opacity shrink-0"
+                aria-label="Remove project filter"
+              >
+                <span
+                  [innerHTML]="appService.getIcon('close')"
+                  class="w-3.5 h-3.5 flex items-center justify-center"
+                ></span>
+              </button>
+            </span>
+          }
+
+          <button
+            type="button"
+            class="ml-1 text-xs font-semibold text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors duration-150"
+            (click)="clearAllFilters()"
+          >
+            {{ 'Clear all' | translate }}
+          </button>
+        </div>
+      }
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         Loading Skeleton
+         ══════════════════════════════════════════════════════════════════════ -->
+    @if (loading()) {
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-4"
+        aria-busy="true"
+        aria-label="Loading activity logs"
+      >
+        @for (item of skeletonCount; track $index) {
+          <div
+            class="rounded-2xl surface border border-t-6 border-gray-100 dark:border-gray-700/50 border-t-gray-200 dark:border-t-gray-600 shadow-sm p-5 space-y-4 animate-pulse"
+          >
+            <!-- Header row -->
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700/60"></div>
+                <div class="space-y-2">
+                  <div class="h-5 w-24 rounded-full bg-gray-100 dark:bg-gray-700/60"></div>
+                  <div class="h-3 w-16 rounded-full bg-gray-100 dark:bg-gray-700/60"></div>
+                </div>
+              </div>
+              <div class="h-3 w-20 rounded-full bg-gray-100 dark:bg-gray-700/60 mt-1"></div>
+            </div>
+            <!-- Title -->
+            <div class="space-y-2">
+              <div class="h-4 w-2/3 rounded-lg bg-gray-100 dark:bg-gray-700/60"></div>
+              <div class="flex gap-2">
+                <div class="h-5 w-14 rounded-full bg-gray-100 dark:bg-gray-700/60"></div>
+                <div class="h-5 w-12 rounded-full bg-gray-100 dark:bg-gray-700/60"></div>
+              </div>
+            </div>
+            <!-- User row -->
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700/60"></div>
+              <div class="space-y-1.5">
+                <div class="h-3.5 w-28 rounded bg-gray-100 dark:bg-gray-700/60"></div>
+                <div class="h-3 w-36 rounded bg-gray-100 dark:bg-gray-700/60"></div>
+              </div>
+            </div>
+            <!-- Changes (only on alternate skeletons) -->
+            @if ($index % 2 === 0) {
+              <div class="border-t border-gray-100 dark:border-gray-700/50 pt-4 space-y-2">
+                <div class="h-3 w-16 rounded bg-gray-100 dark:bg-gray-700/60"></div>
+                <div class="h-16 w-full rounded-xl bg-gray-50 dark:bg-gray-700/30"></div>
+                <div class="h-16 w-full rounded-xl bg-gray-50 dark:bg-gray-700/30"></div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         Empty State
+         ══════════════════════════════════════════════════════════════════════ -->
+    @else if (filteredLogs().length === 0) {
+      <div
+        class="flex flex-col items-center justify-center py-24 text-center"
+        role="status"
+        aria-label="No activity logs found"
+      >
+        <!-- Illustration -->
+        <div class="relative mb-8">
+          <div
+            class="w-24 h-24 rounded-3xl bg-gray-100 dark:bg-gray-800/60 flex items-center justify-center"
+          >
+            <span
+              [innerHTML]="appService.getIcon('wavePulse')"
+              class="w-3.5 h-3.5 text-4xl flex items-center justify-center"
+            ></span>
+          </div>
+          <!-- Floating dots -->
+          <div
+            class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 border-2 border-white dark:border-gray-950"
+          ></div>
+          <div
+            class="absolute -bottom-1 -left-3 w-3.5 h-3.5 rounded-full bg-blue-100 dark:bg-blue-900/40 border-2 border-white dark:border-gray-950"
+          ></div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+          {{ 'No activity found' | translate }}
+        </h3>
+        <p class="text-sm text-gray-400 dark:text-gray-500 max-w-xs leading-relaxed mb-6">
+          {{
+            'Try changing your filters or search query, or create a new project to start tracking activity.'
+              | translate
+          }}
+        </p>
+        @if (hasActiveFilters()) {
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold active:scale-95 transition-all duration-150"
+            (click)="clearAllFilters()"
+          >
+            <span
+              [innerHTML]="appService.getIcon('arrowsRotate')"
+              class="w-3.5 h-3.5 flex items-center justify-center"
+            ></span>
+            {{ 'Reset filters' | translate }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         Activity Grid
+         ══════════════════════════════════════════════════════════════════════ -->
+    @else {
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-4"
+        role="feed"
+        aria-label="Activity logs"
+        aria-live="polite"
+      >
+        @for (log of activityLogs(); track log._id) {
+          <div class="translate-y-2" [style.animation-delay]="($index % 12) * 40 + 'ms'">
+            <app-activity-log-card [log]="log" />
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<app-tf-pagination
+  [currentPage]="pagination().pageNumber"
+  [totalItemsCount]="pagination().totalRecords"
+  [perPage]="pagination().limit"
+  (pageChange)="onPageChange($event)"
+  (perPageChange)="onPerPageChange($event)"
+/>

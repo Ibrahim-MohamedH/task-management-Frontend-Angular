@@ -1,0 +1,51 @@
+<form [formGroup]="form" (submit)="submit()">
+  <app-tf-card>
+    <div card-header>
+      <h2 class="text-2xl text-center font-bold text-green-800 dark:text-green-400">
+        {{ 'Add Project' | translate }}
+      </h2>
+    </div>
+    @if (errorMessage()) {
+      <app-tf-alert alertType="danger" textClass="text-lg!" alertClass="mb-3" [closable]="true">
+        {{ translate.getCurrentLang() == 'en' ? errorMessage().en : errorMessage().ar }}
+      </app-tf-alert>
+    }
+    <div class="flex flex-wrap gap-y-3">
+      <div class="lg:w-6/12 md:w-full sm:w-6/12 w-full">
+        <app-tf-input
+          [label]="'Project Name' | translate"
+          type="text"
+          [placeholder]="'Project Name' | translate"
+          formControlName="name"
+          [required]="true"
+          [errorMessage]="
+            validationService.getErrorMessage(form, 'name', 'Project Name', apiErrors)
+          "
+          [isValid]="validationService.isValid(form, 'name')"
+        ></app-tf-input>
+      </div>
+      <div class="w-full">
+        <app-tf-input
+          [label]="'Description' | translate"
+          type="textArea"
+          [placeholder]="'Project Description' | translate"
+          formControlName="description"
+          [errorMessage]="
+            validationService.getErrorMessage(form, 'description', 'Description', apiErrors)
+          "
+          [isValid]="validationService.isValid(form, 'description')"
+        ></app-tf-input>
+      </div>
+      <div class="w-full">
+        <app-tf-button
+          type="submit"
+          labelClass="text-xl"
+          [loading]="loading()"
+          [disabled]="!form.valid"
+          [label]="'Add New Project' | translate"
+          [icon]="'plusSolid'"
+        ></app-tf-button>
+      </div>
+    </div>
+  </app-tf-card>
+</form>

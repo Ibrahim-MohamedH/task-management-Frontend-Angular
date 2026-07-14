@@ -1,0 +1,82 @@
+<form [formGroup]="form" (submit)="submit()">
+  <app-tf-card>
+    <div card-header>
+      <h2 class="text-2xl text-center font-bold text-green-800 dark:text-green-400">
+        {{ mode === 'create'
+        ? ('New Task' | translate)
+        : ('Edit Task' | translate) }}
+      </h2>
+      @if(errorMessage()){
+        <app-tf-alert alertType="danger" textClass="text-lg!" alertClass="mb-3" [closable]="true">
+         {{ translate.getCurrentLang() == "en" ? errorMessage().en : errorMessage().ar }}
+      </app-tf-alert>
+      }
+      <div class="flex flex-wrap gap-y-3">
+      <div class="w-full">
+        <app-tf-input
+          [label]="'Task Title' | translate"
+          type="text"
+          [placeholder]="'Task Title' | translate"
+          formControlName="title"
+          [required]="true"
+          [errorMessage]="
+            validationService.getErrorMessage(form, 'title', 'Task Title', apiErrors)
+          "
+          [isValid]="validationService.isValid(form, 'title')"
+        ></app-tf-input>
+      </div>
+      <div class="lg:w-6/12 md:w-full sm:w-6/12 w-full lg:pe-1 md:pe-0 sm:pe-1 pe-0">
+        <app-tf-input
+          [label]="'Priority' | translate"
+          type="text"
+          [placeholder]="'Task Priority' | translate"
+          formControlName="priority"
+          [errorMessage]="
+            validationService.getErrorMessage(form, 'priority', 'Priority', apiErrors)
+          "
+          [isValid]="validationService.isValid(form, 'priority')"
+        ></app-tf-input>
+      </div>
+      <div class="lg:w-6/12 md:w-full sm:w-6/12 w-full  lg:ps-1 md:ps-0 sm:ps-1 ps-0">
+        <app-tf-input
+          [label]="'Due Date' | translate"
+          type="date"
+          [placeholder]="'Due Date' | translate"
+          formControlName="dueDate"
+          [errorMessage]="
+            validationService.getErrorMessage(form, 'dueDate', 'Due Date', apiErrors)
+          "
+          [isValid]="validationService.isValid(form, 'dueDate')"
+        ></app-tf-input>
+      </div>
+      <div class="w-full">
+        <app-tf-input
+          [label]="'Description' | translate"
+          type="textArea"
+          [placeholder]="'Task Description' | translate"
+          formControlName="description"
+          [errorMessage]="
+            validationService.getErrorMessage(form, 'description', 'Description', apiErrors)
+          "
+          [isValid]="validationService.isValid(form, 'description')"
+        ></app-tf-input>
+      </div>
+      <div class="w-full">
+        <app-tf-button
+          type="submit"
+          labelClass="text-xl"
+          [loading]="loading()"
+          [disabled]="!form.valid"
+          [label]="mode === 'create'
+        ? ('Add New Task' | translate)
+        : ('Edit Task' | translate)"
+          [icon]="
+          mode === 'create'
+        ? 'plusSolid'
+        : ''"
+        ></app-tf-button>
+      </div>
+    </div>
+    </div>
+  </app-tf-card>
+</form>

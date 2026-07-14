@@ -1,0 +1,118 @@
+<div class="flex {{type() == 'checkbox' ? 'items-center': 'flex-col'}} gap-1.5">
+  @if (showLabel() && labelPosition() == 'start') {
+    <label class="text-lg cursor-pointer font-semibold flex items-center gap-1 {{labelClass()}}" [for]="generateId(label())"
+      >
+      @if (icon()) {
+        <span [innerHTML]="icon()" class="me-1"></span>
+      }
+      {{ label() }}
+      @if (required()) {
+        <span class="text-red-600">*</span>
+      }
+    </label>
+  }
+
+  <div class="relative">
+    @if(type() == 'checkbox'){
+      <input
+        #passwordInput
+        [type]="type()"
+        [id]="generateId(label())"
+        class="w-6 h-6 accent-green-700 dark:accent-green-500 checked:appearance-auto rounded-xl tf-input px-3.5 outline-none {{ inputClass() }} {{ errorMessage() ? 'border border-red-800 ' : '' }} {{isValid() ? 'border-green-600 : ''}}"
+        [readonly]="readonly()"
+        [disabled]="disabled"
+        [checked]="value()"
+        (change)="onCheckboxChange($event)"
+        (blur)="onTouched()"
+      />
+    }@else if (
+      type() == "text" ||
+      type() == "email" ||
+      type() == "number" ||
+      type() == "password" ||
+      type() == "url" ||
+      type() == "date"
+    ) {
+
+      <input
+        #passwordInput
+        [type]="type()"
+        [id]="generateId(label())"
+        class="w-full h-10 tf-input rounded-xl px-3 py-2 text-lg outline-none placeholder:text-text-faint {{ inputClass() }} {{ errorMessage() ? 'border border-red-800! shadow-red-800! inset-shadow-md' : '' }} {{isValid() ? 'border border-green-600!' : ''}}"
+        [autocomplete]="label()"
+        [attr.pattern]="
+          type() == 'url'
+            ? 'https?:\/\/(www\.)?[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(\/[^\s]*)?'
+            : ''
+        "
+        [placeholder]="type() == 'password' ? '********' : (placeholder() ?? label())"
+        [readonly]="readonly()"
+        [disabled]="disabled"
+        [ngModel]="value()"
+        (ngModelChange)="onInputChange($event)"
+        (blur)="onTouched()"
+      />
+      @if (type() === "password") {
+        <i
+          [class]="toggleIcon() + ' absolute inset-e-3.5 top-1/2 -translate-y-1/2 text-lg cursor-pointer'"
+          (click)="togglePassword(passwordInput)"
+          [style]="displayMeter() ? 'top: 30%':''"
+        ></i>
+      }
+      @if (type() === "password" && showMeter() && displayMeter()) {
+        <div class="mt-2">
+          <div class="flex gap-1 mb-1.5">
+            @for (i of [1, 2, 3, 4]; let idx = $index; track i) {
+              <div
+                class="flex-1 h-1 rounded-4xl bg-white
+                {{strengthKey() === 'weak' && idx < score() ? 'bg-red-600!': ''}}
+                {{strengthKey() === 'fair' && idx < score()? 'bg-amber-600!':''}}
+                {{strengthKey() === 'good' && idx < score()? 'bg-amber-400!': ''}}
+                {{strengthKey() === 'strong' && idx < score()? 'bg-green-600!': ''}}
+                "
+              ></div>
+            }
+          </div>
+
+          <div class="text-xs
+                {{strengthKey() === 'weak' ? 'text-red-600!': ''}}
+                {{strengthKey() === 'fair'? 'text-amber-600!':''}}
+                {{strengthKey() === 'good'? 'text-amber-400!': ''}}
+                {{strengthKey() === 'strong'? 'text-green-600!': ''}}">
+            {{ strengthLabel() | translate }}
+          </div>
+        </div>
+      }
+    } @else {
+      <textarea
+        [id]="generateId(label())"
+        class="w-full h-20 tf-input rounded-xl px-3 py-2 text-lg outline-none placeholder:text-text-faint {{ inputClass() }} {{ errorMessage() ? 'border border-red-800 ' : '' }} {{isValid() ? 'border-green-600!' : ''}}"
+        [autocomplete]="label()"
+        style="padding-block: 10px"
+        [placeholder]="placeholder() ?? label()"
+        [readonly]="readonly()"
+        [disabled]="disabled"
+        [ngModel]="value()"
+        (ngModelChange)="onInputChange($event)"
+        (blur)="onTouched()"
+      ></textarea>
+    }
+  </div>
+  @if (showLabel() && labelPosition() == 'end') {
+    <label class="text-lg cursor-pointer font-semibold flex items-center gap-1 {{labelClass()}}" [for]="generateId(label())"
+      >
+      @if (icon()) {
+        <span [innerHTML]="icon()"></span>
+      }
+      {{ label() }}
+      @if (required()) {
+        <span class="text-red-600">*</span>
+      }
+    </label>
+  }
+  @if (errorMessage()) {
+    <div class="text-xs  text-red-600 {{ errorMessage() ? 'block' : 'hidden' }} {{errorMessageClass()}}">
+      {{ errorMessage() }}
+    </div>
+  }
+</div>

@@ -1,0 +1,35 @@
+<main class="min-h-dvh">
+  <!-- Topbar -->
+  <header id="topbar" class="glass border-b flex justify-between items-center gap-3 p-4 lg:px-6">
+    <h1 id="page-title" class="text-base lg:text-lg font-bold tracking-tight hidden sm:block">
+      Tasky-Flow
+    </h1>
+
+    <div class="flex items-center gap-1.5">
+      <!-- Theme toggle -->
+      <button
+        (click)="toggleLanguage()"
+        class="btn-ripple w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[rgb(241,240,237)] dark:hover:bg-[rgb(27,33,29)] transition-colors relative"
+        aria-label="Toggle dark mode"
+        aria-pressed="false"
+      >
+        {{ currentLang == 'AR' ? 'EN' : 'AR' }}
+      </button>
+      <button
+        (click)="toggleDarkMode()"
+        class="btn-ripple w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[rgb(241,240,237)] dark:hover:bg-[rgb(27,33,29)] transition-colors relative"
+        aria-label="Toggle dark mode"
+        aria-pressed="false"
+      >
+        @if (this.isDark) {
+          <span>☀️</span>
+        } @else {
+          <span>🌙</span>
+        }
+      </button>
+    </div>
+  </header>
+  <div class="p-7 flex justify-center items-center">
+    <router-outlet></router-outlet>
+  </div>
+</main>

@@ -1,0 +1,102 @@
+@if(totalPages() > 0){
+  <div class="mt-6 flex w-full flex-col items-center justify-between gap-6 p-4 md:flex-row">
+    <!-- INFO -->
+    <div class="text-sm font-medium">
+      {{ 'Showing' | translate }}
+
+      <span class="font-semibold ">
+        {{ (currentPage() - 1) * perPage() + 1 }}
+      </span>
+
+      -
+
+      <span class="font-semibold ">
+        {{
+          currentPage() * perPage() > totalItemsCount()
+            ? totalItemsCount()
+            : currentPage() * perPage()
+        }}
+      </span>
+
+      {{ 'of' | translate }}
+
+      <span class="font-semibold ">
+        {{ totalItemsCount() }}
+      </span>
+    </div>
+
+    <!-- PAGINATION -->
+    <div
+      class="flex flex-wrap items-center gap-1 rounded-xl border border-gray-200 bg-surface p-1 shadow-sm"
+    >
+      <!-- PREVIOUS -->
+      <button
+        type="button"
+        (click)="navigateTo(currentPage() - 1)"
+        [disabled]="currentPage() === 1"
+        class="flex cursor-pointer h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:not-disabled:bg-brand hover:not-disabled:text-white disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        @if (transalate.getCurrentLang() == 'en') {
+          <span [innerHTML]="appService.getIcon('chevronleft')"></span>
+        } @else {
+          <span [innerHTML]="appService.getIcon('chevronRight')"></span>
+        }
+      </button>
+
+      <!-- PAGES -->
+      @for (page of pages(); track page) {
+        @if (page === '...') {
+          <span class="flex h-9 w-9 items-center justify-center text-sm text-gray-400"> ... </span>
+        } @else {
+          <button
+            type="button"
+            (click)="navigateTo(+page)"
+            class="h-9 w-9 rounded-lg text-sm font-semibold transition-all cursor-pointer"
+            [class.bg-brand]="currentPage() === page"
+            [class.text-white]="currentPage() === page"
+            [class.shadow]="currentPage() === page"
+            [class.text-gray-700]="currentPage() !== page"
+            [class.hover:bg-brand-2]="currentPage() !== page"
+            [class.hover:text-white]="currentPage() !== page"
+          >
+            {{ page }}
+          </button>
+        }
+      }
+
+      <!-- NEXT -->
+      <button
+        type="button"
+        (click)="navigateTo(currentPage() + 1)"
+        [disabled]="currentPage() === totalPages()"
+        class="flex h-9 w-9 items-center cursor-pointer justify-center rounded-lg text-gray-500 transition hover:not-disabled:bg-brand hover:not-disabled:text-white disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        @if (transalate.getCurrentLang() == 'en') {
+          <span [innerHTML]="appService.getIcon('chevronRight')"></span>
+        } @else {
+          <span [innerHTML]="appService.getIcon('chevronleft')"></span>
+        }
+      </button>
+    </div>
+
+    <!-- PAGE SIZE -->
+    <div class="flex items-center gap-2">
+      <span class="text-sm">
+        {{ 'Rows' | translate }}
+      </span>
+
+      <select
+        class="rounded-lg border border-gray-200 px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        [value]="perPage()"
+        (change)="changePerPage($any($event.target).value)"
+      >
+        @for (option of perPageOptions; track option) {
+          <option [value]="option">
+            {{ option }}
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+
+}

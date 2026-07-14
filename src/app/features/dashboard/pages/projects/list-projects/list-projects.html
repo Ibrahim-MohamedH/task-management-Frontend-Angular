@@ -1,0 +1,512 @@
+<div class="flex flex-col flex-wrap sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div>
+    <p class="text-text-muted text-sm mt-0.5" id="projects-count-label">
+      @if (loading()) {
+        {{ 'Loading projects…' | translate }}
+      } @else {
+        {{ 'You have' | translate }} {{ projects().length }}
+        @if (projects().length > 1) {
+          {{ 'Projects' | translate }}
+        } @else {
+          {{ 'Project' | translate }}
+        }
+        !
+      }
+    </p>
+  </div>
+  <div class="flex items-center flex-wrap gap-2.5">
+    @if (appService.canAccess(['admin'])) {
+      <div class="flex items-center gap-1">
+        <input
+          type="checkbox"
+          class="tf-input rounded-xl outline-none"
+          id="admin"
+          (change)="filterAdmin($event)"
+        />
+        <label for="admin" class="cursor-pointer">{{ 'Show All' | translate }}</label>
+      </div>
+    }
+    <!-- Status filter -->
+    <div class="relative">
+      <button
+        id="status-filter-btn"
+        class="flex items-center cursor-pointer gap-1.5 text-sm font-medium bg-surface border border-border rounded-xl px-3.5 py-2 hover:bg-surface-2 transition-colors"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        (click)="toggleStatusFilter()"
+      >
+        <span
+          [innerHTML]="appService.getIcon('filter')"
+          class="w-3.5 h-3.5 text-text-muted flex items-center justify-center"
+        ></span>
+        <span id="status-filter-label">{{ selectedStatusLabel() | translate }}</span>
+        <span
+          [innerHTML]="appService.getIcon('chevronDown')"
+          class="w-3.5 h-3.5 text-text-muted flex items-center justify-centertransition-transform duration-200"
+          [class.rotate-180]="statusFilter()"
+        ></span>
+      </button>
+      @if (statusFilter()) {
+        <ul
+          id="status-filter-panel"
+          class="absolute inset-e-0 mt-1.5 w-44 bg-surface border border-border rounded-2xl shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)] py-1.5 z-20 -translate-y-1.5 scale-95 transition-all duration-150 origin-top-end"
+          role="listbox"
+          aria-label="Filter by status"
+        >
+          @for (status of statuses; track status.value) {
+            <li
+              role="option"
+              (click)="changeStatus(status.value)"
+              class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all"
+              [class.bg-brand-soft]="selectedStatus() === status.value"
+              [class.font-semibold]="selectedStatus() === status.value"
+            >
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full" [class]="status.color"> </span>
+
+                {{ status.label | translate }}
+              </div>
+
+              @if (selectedStatus() === status.value) {
+                ✓
+              }
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- Sort -->
+    <select
+      id="sort-select"
+      class="text-sm font-medium bg-surface border border-border rounded-xl px-3 py-2 outline-none hover:bg-surface-2 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236B6963\' stroke-width=\'2\'%3E%3Cpath d=\'M6 9l6 6 6-6\'/%3E%3C/svg%3E')] bg-no-repeat bg-position-[inset-end_10px_center] bg-size-[14px_14px]"
+      aria-label="Sort projects"
+      (change)="orderFilter($event)"
+    >
+      @for (option of sortOptions; track $index) {
+        <option value="{{ $index }}">{{ option.label | translate }}</option>
+      }
+    </select>
+
+    <!-- View toggle -->
+    <div class="flex bg-surface-2 rounded-xl p-1 gap-0.5" role="group" aria-label="View mode">
+      <button
+        id="view-grid-btn"
+        class="w-8 h-8 rounded-lg cursoir-pointer flex items-center justify-center transition-all duration-300 {{
+          listType() == 'grid'
+            ? 'text-brand bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+            : 'text-text-muted hover:text-text cursor-pointer'
+        }}"
+        aria-pressed="true"
+        aria-label="Grid view"
+        (click)="changeListView('grid')"
+      >
+        <span
+          [innerHTML]="appService.getIcon('grid')"
+          class="flex items-center justify-center"
+        ></span>
+      </button>
+      <button
+        id="view-list-btn"
+        class="w-8 h-8 rounded-lg cursoir-pointer flex items-center justify-center transition-all duration-300 {{
+          listType() == 'list'
+            ? 'text-brand bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+            : 'text-text-muted hover:text-text cursor-pointer'
+        }}"
+        aria-pressed="false"
+        aria-label="List view"
+        (click)="changeListView('list')"
+      >
+        <span
+          [innerHTML]="appService.getIcon('list')"
+          class="flex items-center justify-center"
+        ></span>
+      </button>
+    </div>
+
+    <!-- New Project -->
+    <button
+      id="new-project-btn"
+      class="flex items-center gap-2 bg-brand cursor-pointer text-sm font-semibold rounded-xl px-4 py-2 hover:bg-brand-2 active:scale-[0.97] transition-all duration-150 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.12)]"
+      style="color: rgb(var(--brand-contrast))"
+      routerLink="/dashboard/projects/add-project"
+    >
+      <span
+        [innerHTML]="appService.getIcon('plusSolid')"
+        class="flex items-center justify-center w-4 h-4"
+      ></span>
+      <span class="hidden sm:inline">{{ 'New Project' | translate }}</span>
+    </button>
+  </div>
+</div>
+@if (projects().length > 0) {
+  @if (listType() == 'grid') {
+    <!-- Projects grid -->
+    <div
+      id="projects-grid"
+      class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
+      role="list"
+      aria-label="Projects"
+    >
+      @for (project of projects(); track project._id) {
+        <article
+          role="listitem"
+          class="project-card group relative bg-surface border border-border rounded-2xl p-5 cursor-pointer hover:-translate-y-1 hover:border-border-strong hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.14)] transition-all duration-200 flex flex-col gap-4 focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+          data-id="proj_006"
+          tabindex="0"
+          aria-label="Open details for Onboarding Redesign"
+          [routerLink]="'/dashboard/task/' + project._id"
+        >
+          <!-- Card header -->
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-3 w-full flex-wrap">
+              <!-- Project icon -->
+              <div
+                class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 bg-info-soft text-info"
+              >
+                {{ appService.initials(project.name) }}
+              </div>
+              <div class="relative">
+                @let badge = statusBadge(project.status);
+
+                <button
+                  type="button"
+                  (click)="toggleStatus(project._id); $event.stopPropagation()"
+                  class="inline-flex cursor-pointer items-center gap-2 rounded-full"
+                >
+                  <span
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                    [class]="badge.bg + ' ' + badge.text"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full" [class]="badge.dot"> </span>
+
+                    {{ badge.label | translate }}
+                  </span>
+
+                  <span
+                    class="transition-transform duration-200"
+                    [class.rotate-180]="openedStatus() === project._id"
+                  >
+                    <span
+                      [innerHTML]="appService.getIcon('chevronDown')"
+                      class="flex items-center justify-center"
+                    ></span>
+                  </span>
+                </button>
+
+                @if (openedStatus() === project._id) {
+                  <div
+                    class="absolute right-0 mt-2 w-44 rounded-2xl border border-border bg-surface shadow-soft z-20"
+                  >
+                    @for (status of PROJECT_STATUS; track status) {
+                      @let option = statusBadge(status);
+
+                      <button
+                        class="w-full cursor-pointer flex items-center gap-2 px-4 py-2 text-left hover:bg-surface-2 transition"
+                        (click)="changeProjectStatus(project, status); $event.stopPropagation()"
+                      >
+                        <span class="w-2 h-2 rounded-full" [class]="option.dot"> </span>
+
+                        <span>{{ option.label | translate }}</span>
+
+                        @if (project.status === status) {
+                          <span class="ms-auto text-brand"> ✓ </span>
+                        }
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="ms-auto flex gap-1">
+                <button
+                  id="edit-project-btn"
+                  class="flex items-center text-amber-soft gap-2 bg-amber cursor-pointer text-sm font-semibold rounded-xl px-3 py-3 hover:bg-amber-700 active:scale-[0.97] transition-all duration-150"
+                  routerLink="/dashboard/projects/edit-project/{{ project._id }}"
+                >
+                  <span
+                    [innerHTML]="appService.getIcon('pen')"
+                    class="flex items-center justify-center w-2 h-2"
+                  ></span>
+                </button>
+                <button
+                  id="delete-project-btn"
+                  class="flex items-center text-white gap-2 bg-danger cursor-pointer text-sm font-semibold rounded-xl px-3 py-3 hover:bg-red-700 active:scale-[0.97] transition-all duration-150"
+                  (click)="deleteProject(project._id); $event.stopPropagation()"
+                >
+                  <span
+                    [innerHTML]="appService.getIcon('trash')"
+                    class="flex items-center justify-center w-2 h-2"
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Name + description -->
+          <div class="flex-1">
+
+              @if(!project.isDefault){
+                  <div class="flex justify-end" (click)="$event.stopPropagation()">
+                  <app-tf-input
+                    type="checkbox"
+                    [label]="'Make Default' | translate"
+                    labelClass="text-xs"
+                    inputClass="w-3! h-3!"
+                    labelPosition="end"
+                    (change)="makeDefault($event, project._id)"
+                  ></app-tf-input>
+                </div>
+                }
+            <h3
+              class="font-bold text-[15px] leading-snug mb-1.5 group-hover:text-brand transition-colors duration-150"
+            >
+              {{ project.name }}
+              @if (project.isDefault) {
+                <span
+                  class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-soft text-amber shrink-0"
+                  >{{ 'Default' | translate }}</span
+                >
+              }
+            </h3>
+            <p class="text-sm text-text-muted leading-relaxed line-clamp-2">
+              {{ project.description }}
+            </p>
+          </div>
+
+          <!-- Stats row -->
+          <div class="flex items-center gap-4 text-xs text-text-muted font-mono">
+            <span class="flex items-center gap-1.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                data-lucide="check-square"
+                aria-hidden="true"
+                class="lucide lucide-check-square w-3.5 h-3.5 text-info"
+              >
+                <path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"></path>
+                <path d="m9 11 3 3L22 4"></path>
+              </svg>
+              {{ project.tasksCount }}
+              {{ project.tasksCount > 1 ? ('tasks' | translate) : ('task' | translate) }}
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                data-lucide="users"
+                aria-hidden="true"
+                class="lucide lucide-users w-3.5 h-3.5 text-info"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+              {{ project.members.length }}
+              {{ project.members.length > 1 ? ('members' | translate) : ('member' | translate) }}
+            </span>
+          </div>
+
+          <!-- Footer -->
+          <div class="flex items-center justify-between pt-3.5 border-t border-border">
+            <div class="flex">
+              <span class="text-sm"> {{ 'Owner' | translate }}: {{ project.owner.name }} </span>
+            </div>
+            <span class="text-[11px] font-mono text-text-faint">{{
+              project.createdAt | date: 'MMMM dd, yyyy'
+            }}</span>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  @if (listType() == 'list') {
+    <!-- List view container (hidden by default) -->
+    <div id="projects-list" class="space-y-2" role="list" aria-label="Projects">
+      @for (project of projects(); track project._id) {
+        <article
+          role="listitem"
+          class="project-card group bg-surface border border-border rounded-xl px-4 py-3.5 cursor-pointer hover:border-border-strong hover:-translate-y-1 hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] transition-all duration-200 flex items-center gap-4"
+          data-id="${project._id}"
+          tabindex="0"
+          aria-label="Open details for {{ project.name }}"
+          routerLink="/dashboard/task/{{ project._id }}"
+        >
+          <!-- Icon -->
+          <div
+            class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 bg-info-soft text-info"
+          >
+            {{ appService.initials(project.name) }}
+          </div>
+
+          <!-- Name + desc -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <h3
+                class="font-semibold text-sm leading-tight truncate group-hover:text-brand transition-colors"
+              >
+                {{ project.name }}
+              </h3>
+              @if (project.isDefault) {
+                <span
+                  class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-soft text-amber shrink-0"
+                  >{{ 'Default' | translate }}</span
+                >
+              }
+            </div>
+            <p class="text-xs text-text-muted truncate">{{ project.description }}</p>
+          </div>
+
+          <!-- Status -->
+          <div class="hidden sm:block shrink-0">
+            <div class="relative">
+              @let badge = statusBadge(project.status);
+
+              <button
+                type="button"
+                (click)="toggleStatus(project._id);  $event.stopPropagation()"
+                class="inline-flex cursor-pointer items-center gap-2 rounded-full"
+              >
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                  [class]="badge.bg + ' ' + badge.text"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full" [class]="badge.dot"> </span>
+
+                  {{ badge.label | translate }}
+                </span>
+
+                <span
+                  class="transition-transform duration-200"
+                  [class.rotate-180]="openedStatus() === project._id"
+                >
+                  <span
+                    [innerHTML]="appService.getIcon('chevronDown')"
+                    class="flex items-center justify-center"
+                  ></span>
+                </span>
+              </button>
+
+              @if (openedStatus() === project._id) {
+                <div
+                  class="absolute right-0 mt-2 w-44 rounded-2xl border border-border bg-surface shadow-soft z-20"
+                >
+                  @for (status of PROJECT_STATUS; track status) {
+                    @let option = statusBadge(status);
+
+                    <button
+                      class="w-full cursor-pointer flex items-center gap-2 px-4 py-2 text-left hover:bg-surface-2 transition"
+                      (click)="changeProjectStatus(project, status); $event.stopPropagation()"
+                    >
+                      <span class="w-2 h-2 rounded-full" [class]="option.dot"> </span>
+                      <span>{{ option.label | translate }}</span>
+                      @if (project.status === status) {
+                        <span class="ms-auto text-brand"> ✓ </span>
+                      }
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Members avatars -->
+          <div class="hidden md:block shrink-0">
+            {{ project.members.length }}
+            {{ project.members.length > 1 ? ('members' | translate) : ('member' | translate) }}
+          </div>
+
+          <!-- Tasks count -->
+          <span
+            class="hidden lg:flex items-center gap-1.5 text-xs font-mono text-text-muted shrink-0"
+          >
+            <i class="fa-regular fa-square-check"></i>
+            {{ project.tasksCount }}
+          </span>
+
+          <!-- Date -->
+          <span class="hidden xl:block text-xs font-mono text-text-faint shrink-0 w-24 text-end">{{
+            project.createdAt | date: 'MMMM dd, yyyy'
+          }}</span>
+          <div class="flex gap-1">
+            <button
+              id="edit-project-btn"
+              class="flex items-center text-amber-soft gap-2 bg-amber cursor-pointer text-sm font-semibold rounded-xl px-3 py-3 hover:bg-amber-700 active:scale-[0.97] transition-all duration-150"
+              routerLink="/dashboard/projects/edit-project/{{ project._id }}"
+              (click)=" $event.stopPropagation()"
+            >
+              <span
+                [innerHTML]="appService.getIcon('pen')"
+                class="flex items-center justify-center w-2 h-2"
+              ></span>
+            </button>
+            <button
+              id="delete-project-btn"
+              class="flex items-center text-white gap-2 bg-danger cursor-pointer text-sm font-semibold rounded-xl px-3 py-3 hover:bg-red-700 active:scale-[0.97] transition-all duration-150"
+              (click)="deleteProject(project._id); $event.stopPropagation()"
+            >
+              <span
+                [innerHTML]="appService.getIcon('trash')"
+                class="flex items-center justify-center w-2 h-2"
+              ></span>
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+} @else {
+  <div
+    class="flex flex-col items-center justify-center py-24 text-center"
+    role="status"
+    aria-label="No activity logs found"
+  >
+    <!-- Illustration -->
+    <div class="relative mb-8">
+      <div
+        class="w-24 h-24 rounded-3xl bg-gray-100 dark:bg-gray-800/60 flex items-center justify-center"
+      >
+        <span
+          [innerHTML]="appService.getIcon('folderXmark')"
+          class="w-3.5 h-3.5 text-4xl flex items-center justify-center"
+        ></span>
+      </div>
+      <!-- Floating dots -->
+      <div
+        class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 border-2 border-white dark:border-gray-950"
+      ></div>
+      <div
+        class="absolute -bottom-1 -left-3 w-3.5 h-3.5 rounded-full bg-blue-100 dark:bg-blue-900/40 border-2 border-white dark:border-gray-950"
+      ></div>
+    </div>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+      {{ 'No projects found' | translate }}
+    </h3>
+    <p class="text-sm text-gray-400 dark:text-gray-500 max-w-xs leading-relaxed mb-6">
+      {{ 'Add your next project!' | translate }}
+    </p>
+  </div>
+}
+
+<app-tf-pagination
+  [currentPage]="pagination().pageNumber"
+  [totalItemsCount]="pagination().totalRecords"
+  [perPage]="pagination().limit"
+  (pageChange)="onPageChange($event)"
+  (perPageChange)="onPerPageChange($event)"
+/>

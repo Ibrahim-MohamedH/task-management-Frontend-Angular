@@ -1,0 +1,113 @@
+<aside
+  id="sidebar"
+  class="fixed md:static inset-y-0 inset-s-0 z-50 flex flex-col bg-surface border-b border-e shrink-0 min-h-screen"
+  [class.collapsed]="!toggleSidebarService.isMobile() && !toggleSidebarService.isOpen()"
+  [class.mobile-drawer]="toggleSidebarService.isMobile()"
+  [class.open]="toggleSidebarService.mobileSidebarOpen()"
+  aria-label="Primary navigation"
+>
+  <!-- Logo row -->
+  <div class="flex items-center h-18 px-5 border-b shrink-0 gap-3">
+    <div class="w-9 h-9 rounded-xl bg-brand flex items-center justify-center shrink-0">
+      <span
+        [innerHTML]="appService.getIcon('bolt')"
+        class="w-5 h-5 text-brand-contrast flex items-center justify-center"
+        style="color: rgb(var(--brand-contrast))"
+      ></span>
+    </div>
+    <span
+      class="sidebar-logo-text font-bold text-lg tracking-tight whitespace-nowrap overflow-hidden"
+      >TaskyFlow</span
+    >
+    <button
+      id="sidebar-close-btn"
+      class="md:hidden ms-auto w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:bg-surface-2 transition-colors"
+      aria-label="Close menu"
+      (click)="toggleSidebarMobile()"
+    >
+      <span
+        [innerHTML]="appService.getIcon('close')"
+        class="w-4 h-4 flex items-center justify-center"
+      ></span>
+    </button>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 scrollbar-thin px-3 py-4" aria-label="Main menu">
+    @for(item of sidebarItems(); track $index){
+      <p
+        class="sidebar-section-label px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-text-faint"
+      >
+        {{ item.title | translate }}
+      </p>
+      <ul class="space-y-1" role="list">
+        @for (child of item.children; track $index) {
+          @if (appService.canAccess(child.permission)) {
+            <li>
+              <a
+                [routerLink]="child.routerLink"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                data-page="Projects"
+                class="nav-item group flex items-center gap-3 px-3 py-2.5"
+              >
+                <span
+                  [innerHTML]="appService.getIcon(child.icon)"
+                  class="nav-icon w-4.5 h-4.5 shrink-0 text-text-muted flex items-center justify-center"
+                ></span>
+                <span class="sidebar-label text-sm font-medium">{{ child.title | translate }}</span>
+                <span class="nav-tooltip">{{ child.title | translate }}</span>
+              </a>
+            </li>
+          }
+        }
+      </ul>
+    }
+  </nav>
+
+  <!-- Bottom: settings + user -->
+  <div class="border-t p-3 shrink-0">
+    <a href="#" data-page="Settings" class="nav-item group flex items-center gap-3 px-3 py-2.5">
+      <span
+        [innerHTML]="appService.getIcon('gear')"
+        class="nav-icon w-4.5 h-4.5 shrink-0 text-text-muted flex items-center justify-center"
+      ></span>
+      <span class="sidebar-label text-sm font-medium">{{ 'Settings' | translate }}</span>
+      <span class="nav-tooltip">{{ 'Settings' | translate }}</span>
+    </a>
+    <a href="#" data-page="Settings" class="nav-item group flex items-center gap-3 px-3 py-2.5">
+      <span
+        [innerHTML]="appService.getIcon('user')"
+        class="nav-icon w-4.5 h-4.5 shrink-0 text-text-muted flex items-center justify-center"
+      ></span>
+      <span class="sidebar-label text-sm font-medium">{{ 'Profile' | translate }}</span>
+      <span class="nav-tooltip">{{ 'Profile' | translate }}</span>
+    </a>
+    <div class="flex items-center gap-3 px-3 py-2.5 mt-1">
+      <div
+        class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 bg-info-soft text-info"
+      >
+        {{ appService.initials(appService.userName()) }}
+      </div>
+      <div class="sidebar-label overflow-hidden">
+        <p class="text-sm font-semibold truncate leading-tight">{{ appService.userName() }}</p>
+        <p class="text-xs text-text-muted truncate">{{ appService.userRole() }}</p>
+      </div>
+    </div>
+  </div>
+  <button
+    id="sidebar-collapse-btn"
+    class="hidden absolute {{
+      !toggleSidebarService.isOpen() ? 'inset-s-16' : 'inset-s-66.25'
+    }} top-1/2 translate-y-1/2 cursor-pointer md:flex ms-auto w-7 h-7 rounded-lg items-center justify-center border bg-bg text-text-muted hover:bg-surface-2 hover:text-text transition-all"
+    aria-label="Collapse sidebar"
+    aria-pressed="false"
+    (click)="toggleSidebar()"
+  >
+    <span
+      [innerHTML]="appService.getIcon(sidebarChevron())"
+      class="w-4 h-4 flex items-center justify-center"
+    >
+    </span>
+  </button>
+</aside>

@@ -1,0 +1,133 @@
+<!-- Topbar -->
+<header id="topbar" class="sticky top-0 z-30 glass border-b flex items-center gap-3 px-4 lg:px-6">
+  <button
+    id="hamburger-btn"
+    class="md:hidden w-9 h-9 rounded-lg flex items-center justify-center hover:bg-surface-2 transition-colors"
+    aria-label="Open menu"
+      (click)="toggleSidebarMobile()"
+  >
+  <span [innerHTML]="appService.getIcon('menu')" class="w-4 h-4 flex items-center justify-center"></span>
+  </button>
+
+    <app-tf-breadcrumb></app-tf-breadcrumb>
+
+
+
+  <div class="flex items-center gap-1.5 ms-auto">
+    <!-- Lang toggle -->
+    <button
+      (click)="toggleLanguage()"
+      class="btn-ripple w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[rgb(241,240,237)] dark:hover:bg-[rgb(27,33,29)] transition-colors relative"
+      aria-label="Toggle dark mode"
+      aria-pressed="false"
+    >
+      {{ currentLang == 'AR' ? 'EN' : 'AR' }}
+    </button>
+    <!-- Theme toggle -->
+    <button
+      (click)="toggleDarkMode()"
+      class="btn-ripple w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[rgb(241,240,237)] dark:hover:bg-[rgb(27,33,29)] transition-colors relative"
+      aria-label="Toggle dark mode"
+      aria-pressed="false"
+    >
+      @if (this.isDark) {
+        <span [innerHTML]="appService.getIcon('sun')" class="text-amber-400 text-shadow-[0_0_10px] text-shadow-amber-300"></span>
+      } @else {
+        <span [innerHTML]="appService.getIcon('moon')" class="text-black text-shadow-[0_0_10px] text-shadow-gray-900"></span>
+      }
+    </button>
+
+    <!-- Messages -->
+    <!-- <button
+      class="btn-ripple relative w-9 h-9 rounded-lg flex items-center justify-center hover:bg-surface-2 transition-colors"
+      aria-label="Messages"
+    >
+    <span [innerHTML]="appService.getIcon('message')" class="w-4.5 h-4.5"></span>
+      <span class="absolute top-1.5 inset-e-1.5 w-2 h-2 rounded-full bg-brand"></span>
+    </button> -->
+
+    <!-- Notifications -->
+    <!-- <div class="relative">
+      <button
+        id="notif-btn"
+        class="btn-ripple relative w-9 h-9 rounded-lg flex items-center justify-center hover:bg-surface-2 transition-colors"
+        aria-label="Notifications"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+    <span [innerHTML]="appService.getIcon('bellRegular')" class="w-4.5 h-4.5"></span>
+        <span
+          class="absolute top-1 inset-e-1 w-4 h-4 rounded-full bg-danger text-white text-[10px] font-bold flex items-center justify-center"
+          >5</span
+        >
+      </button>
+      <div
+        id="notif-panel"
+        class="dropdown-panel absolute inset-e-0 mt-2 w-80 surface card-shadow-lg rounded-2xl overflow-hidden"
+        role="menu"
+      >
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+          <p class="font-semibold text-sm">Notifications</p>
+          <button class="text-xs font-medium text-brand hover:underline">Mark all read</button>
+        </div>
+        <ul
+          class="max-h-80 overflow-y-auto scrollbar-thin divide-y divide-border"
+          id="notif-list"
+        ></ul>
+      </div>
+    </div> -->
+
+    <!-- User dropdown -->
+    <!-- <div class="relative ms-1">
+      <button
+        id="user-menu-btn"
+        class="btn-ripple flex items-center gap-2 ps-1 pe-2 py-1 rounded-lg hover:bg-surface-2 transition-colors"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <img src="https://i.pravatar.cc/64?img=12" alt="" class="w-7 h-7 rounded-full" />
+        <i
+          data-lucide="chevron-down"
+          id="user-menu-chevron"
+          class="icon-rotate w-4 h-4 text-text-muted hidden sm:block"
+        ></i>
+      </button>
+      <div
+        id="user-menu-panel"
+        class="dropdown-panel absolute inset-e-0 mt-2 w-56 surface card-shadow-lg rounded-2xl overflow-hidden py-1.5"
+        role="menu"
+      >
+        <div class="px-3.5 py-2 border-b mb-1">
+          <p class="text-sm font-semibold">Amara Okafor</p>
+          <p class="text-xs text-text-muted">amara@flowdesk.io</p>
+        </div>
+        <a
+          href="#"
+          class="flex items-center gap-2.5 px-3.5 py-2 text-sm hover:bg-surface-2 transition-colors"
+          role="menuitem"
+          ><i data-lucide="user" class="w-4 h-4 text-text-muted"></i>Profile</a
+        >
+        <a
+          href="#"
+          class="flex items-center gap-2.5 px-3.5 py-2 text-sm hover:bg-surface-2 transition-colors"
+          role="menuitem"
+          ><i data-lucide="settings" class="w-4 h-4 text-text-muted"></i>Settings</a
+        >
+        <a
+          href="#"
+          class="flex items-center gap-2.5 px-3.5 py-2 text-sm hover:bg-surface-2 transition-colors"
+          role="menuitem"
+          ><i data-lucide="life-buoy" class="w-4 h-4 text-text-muted"></i>Support</a
+        >
+        <div class="border-t mt-1 pt-1">
+          <a
+            href="#"
+            class="flex items-center gap-2.5 px-3.5 py-2 text-sm text-danger hover:bg-danger-soft transition-colors"
+            role="menuitem"
+            ><i data-lucide="log-out" class="w-4 h-4"></i>Log out</a
+          >
+        </div>
+      </div>
+    </div> -->
+  </div>
+</header>

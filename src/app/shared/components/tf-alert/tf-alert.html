@@ -1,0 +1,42 @@
+@if(isVisible()){
+  <div
+    class="mt-6 p-4 rounded-lg border-s-4 {{classes().bg}} {{classes().border}} {{classes().text}} {{alertClass()}}"
+  >
+    <div
+      class="flex items-start justify-between gap-3"
+    >
+      <div
+        class="flex items-center space-x-2"
+        appRTLSpace
+      >
+        @if(icon()){
+          <span
+            [innerHTML]="appService.getIcon(icon())"
+            [class]="classes().icon"
+          ></span>
+        }
+
+        <p
+          class="text-xs"
+          [class]="classes().text"
+          [class]="textClass()"
+        >
+          <ng-content></ng-content>
+        </p>
+      </div>
+
+      @if(closable()){
+        <button
+          type="button"
+          class="shrink-0 transition-opacity duration-200 hover:opacity-70 cursor-pointer"
+          (click)="closeAlert()"
+        >
+          <span
+            [innerHTML]="appService.getIcon(closeIcon())"
+            class="text-gray-500 text-sm"
+          ></span>
+        </button>
+      }
+    </div>
+  </div>
+}

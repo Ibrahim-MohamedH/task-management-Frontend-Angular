@@ -1,0 +1,18 @@
+<div class="tf-card surface rounded-2xl overflow-hidden card-shadow hover-lift animate-slide-up">
+@if (hasHeader()) {
+  <div class="p-2 px-4 border-b" [class]="titleClass()">
+    <ng-content select="[card-header]"></ng-content>
+  </div>
+}
+
+<div class="p-5" [class]="bodyclass()">
+  <ng-content></ng-content>
+</div>
+
+@if (hasFooter()) {
+  <div class="p-2 border-t" [class]="footerClass()">
+    <ng-content select="[card-footer]"></ng-content>
+  </div>
+}
+
+</div>

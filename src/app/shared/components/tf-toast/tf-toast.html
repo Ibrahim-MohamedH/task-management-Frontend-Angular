@@ -1,0 +1,14 @@
+<div class="fixed bottom-6 inset-e-6 z-100 flex flex-col gap-3">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div
+      class="rounded-xl border border-s-6 bg-surface px-4 py-3 shadow-soft flex gap-3 items-start animate-slide-in"
+      [style.border-color]="config[toast.type].border"
+    >
+      <span class="mt-0.5 {{config[toast.type].color}} flex items-center" [innerHTML]="appService.getIcon(getIcon(toast.type))"> </span>
+
+      <p class="text-sm">
+          {{ translate.getCurrentLang() == 'en' ? toast.message.en : toast.message.ar }}
+        </p>
+    </div>
+  }
+</div>
