@@ -337,5 +337,14 @@
   "Past Due date": "Past Due date",
   "List Users": "List Users",
   "Due Date Today": "Due Date Today",
-  "No Due Date": "No Due Date"
+  "No Due Date": "No Due Date",
+  "Daily":"Daily",
+  "Monthly":"Monthly",
+  "Yearly":"Yearly",
+  "Projects Status":"Projects Status",
+  "Tasks Status":"Tasks Status",
+  "Tasks Priority":"Tasks Priority",
+  "Low":"Low",
+  "Medium":"Medium",
+  "Urgent":"Urgent"
 }

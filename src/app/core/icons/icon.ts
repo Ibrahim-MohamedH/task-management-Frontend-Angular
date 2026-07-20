@@ -87,6 +87,7 @@ export const icons = {
   play: '<i class="fa-solid fa-play"></i>',
   stop: '<i class="fa-solid fa-stop"></i>',
   arrowDown: '<i class="fa-solid fa-arrow-down"></i>',
+  arrowUp: '<i class="fa-solid fa-arrow-up"></i>',
   question: '<i class="fa-solid fa-question"></i>',
   arrowRight: '<i class="fa-solid fa-arrow-right"></i>',
   arrowLeft: '<i class="fa-solid fa-arrow-left"></i>',

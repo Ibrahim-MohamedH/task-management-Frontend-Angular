@@ -129,6 +129,11 @@ export const dashboardRoutes: Routes = [
     ],
   },
   {
+     path: 'reports',
+    loadComponent: () =>
+      import('../../features/dashboard/pages/reports/main-reports/main-reports').then((m) => m.MainReports),
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full',

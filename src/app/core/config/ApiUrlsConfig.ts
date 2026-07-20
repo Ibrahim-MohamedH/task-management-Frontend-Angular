@@ -11,5 +11,11 @@ export const ApiUrlsConfig: any = {
     stats: 'dashboard/stats',
     upcomingTasks: 'dashboard/upcoming-tasks'
   },
-  users: 'users'
+  users: 'users',
+  reports: {
+    users: 'reports/users',
+    projects: 'reports/projects',
+    tasks: 'reports/tasks',
+    charts: 'reports/charts'
+  }
 }

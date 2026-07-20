@@ -16,7 +16,7 @@ export class AppService {
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly apiUrl = environment.apiUrl;
-
+  private theme = signal<boolean>(false);
   loading = signal(false);
 
   // ─────────────────────────────
@@ -63,7 +63,15 @@ export class AppService {
     return this.sanitizer.bypassSecurityTrustHtml(iconHtml);
   }
 
-
+  // ─────────────────────────────
+  // Theme
+  // ─────────────────────────────
+  setTheme(theme: boolean){
+    this.theme.set(theme)
+  }
+  getTheme(){
+    return this.theme()
+  }
   // ─────────────────────────────
   // Permission
   // ─────────────────────────────

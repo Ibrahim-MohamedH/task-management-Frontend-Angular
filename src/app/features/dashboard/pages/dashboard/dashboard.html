@@ -242,7 +242,9 @@
                 </p>
                 @if (task.dueDate) {
                   <p class="text-xs text-text-muted font-mono-data mt-0.5">
-                    {{ task.dueDate | date: 'MMM dd, yyyy' }}
+                    {{ task.dueDate | date: 'MMM dd, yyyy' }} <span [class]="getStatusBadgeClass(task.status)">
+              {{ formatValue(task!.status) | titlecase | translate }}
+            </span>
                     @if (isPastDueDate(task.dueDate) == 'past') {
                       <span
                         class="text-danger text-shadow-red-800 animate-pulse flex items-center gap-2"
@@ -254,7 +256,7 @@
                         ></span>
                         {{ 'Past Due date' | translate }}
                       </span>
-                    }@else if(isPastDueDate(task.dueDate) == 'today'){
+                    } @else if (isPastDueDate(task.dueDate) == 'today') {
                       <span
                         class="text-danger text-shadow-red-300 animate-pulse flex items-center gap-2"
                         style="text-shadow: 0 0 5px"
@@ -269,7 +271,9 @@
                   </p>
                 } @else {
                   <p class="text-xs text-text-muted font-mono-data mt-0.5">
-                    {{ 'No Due Date' | translate }}
+                    {{ 'No Due Date' | translate }} <span [class]="getStatusBadgeClass(task.status)">
+              {{ formatValue(task!.status) | titlecase | translate }}
+            </span>
                   </p>
                 }
               </div>

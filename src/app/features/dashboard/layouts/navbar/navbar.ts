@@ -38,10 +38,12 @@ export class Navbar {
   getThemeMode() {
     const theme = localStorage.getItem(themeKey);
     this.isDark = theme ? JSON.parse(theme) : false;
+    this.appService.setTheme(theme ? JSON.parse(theme) : false)
     document.documentElement.classList.toggle('dark', this.isDark);
   }
   toggleDarkMode() {
     this.isDark = !this.isDark;
+    this.appService.setTheme(this.isDark)
     document.documentElement.classList.toggle('dark', this.isDark);
     localStorage.setItem(themeKey, `${this.isDark}`);
   }

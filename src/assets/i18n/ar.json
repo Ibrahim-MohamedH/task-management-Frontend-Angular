@@ -340,5 +340,14 @@
   "Past Due date": "تجاوز تاريخ الإستحقاق",
   "List Users": "قائمة المستخدمين",
   "Due Date Today": "تاريخ الإستحقاق اليوم",
-  "No Due Date": "لا يوجد تاريخ استحقاق"
+  "No Due Date": "لا يوجد تاريخ استحقاق",
+  "Daily":"يوميا",
+  "Monthly":"شهريا",
+  "Yearly":"سنويا",
+  "Projects Status":"حالة المشاريع",
+  "Tasks Status":"حالة المهام",
+  "Tasks Priority":"اولوية المهام",
+  "Low":"منخفض",
+  "Medium":"متوسط",
+  "Urgent":"عاجل"
 }

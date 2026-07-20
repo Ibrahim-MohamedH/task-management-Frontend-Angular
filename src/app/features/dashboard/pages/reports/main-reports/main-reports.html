@@ -1,1 +1,265 @@
-<p>main-reports works!</p>
+<div class="flex flex-col gap-4">
+  <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 stagger">
+    @if (usersReport()) {
+      <!-- Stat Card -->
+      <div
+        class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up sm:col-span-2 xl:col-span-1"
+      >
+        <div class="mb-2">
+          <select
+            id="sort-select"
+            class="text-sm font-medium bg-surface border border-border rounded-xl px-3 py-2 outline-none hover:bg-surface-2 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236B6963\' stroke-width=\'2\'%3E%3Cpath d=\'M6 9l6 6 6-6\'/%3E%3C/svg%3E')] bg-no-repeat bg-position-[inset-end_10px_center] bg-size-[14px_14px]"
+            aria-label="Sort projects"
+            (change)="orderFilter($event, 'user')"
+          >
+            @for (option of sortOptions; track $index) {
+              <option value="{{ option }}">{{ option | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex items-start justify-between mb-4">
+          <div class="stat-ring-icon bg-amber-soft text-amber">
+            <span [innerHTML]="appService.getIcon('userCircle')"></span>
+          </div>
+          <span
+            class="text-xs font-semibold font-mono-data"
+            [class.text-danger]="usersReport().trend == 'down'"
+            [class.text-brand]="usersReport().trend == 'up'"
+          >
+            @if (usersReport().period == 'daily') {
+              {{ 'Daily' | translate }}
+            } @else if (usersReport().period == 'monthly') {
+              {{ 'Monthly' | translate }}
+            } @else if (usersReport().period == 'yearly') {
+              {{ 'Yearly' | translate }}
+            }
+            {{ usersReport().percentage }}%
+            @if (usersReport().trend == 'up') {
+              <span [innerHTML]="appService.getIcon('arrowUp')"></span>
+            } @else if (usersReport().trend == 'down') {
+              <span [innerHTML]="appService.getIcon('arrowDown')"></span>
+            }
+          </span>
+        </div>
+        <p class="text-2xl font-extrabold font-mono-data leading-none mb-1">
+          {{ usersReport().totalUsers }}
+        </p>
+        <p class="text-lg text-amber font-semibold mb-3">{{ 'Users' | translate }}</p>
+      </div>
+    }
+    @if (projectsReport()) {
+      <!-- Stat Card -->
+      <div class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up">
+        <div class="mb-2">
+          <select
+            id="sort-select"
+            class="text-sm font-medium bg-surface border border-border rounded-xl px-3 py-2 outline-none hover:bg-surface-2 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236B6963\' stroke-width=\'2\'%3E%3Cpath d=\'M6 9l6 6 6-6\'/%3E%3C/svg%3E')] bg-no-repeat bg-position-[inset-end_10px_center] bg-size-[14px_14px]"
+            aria-label="Sort projects"
+            (change)="orderFilter($event, 'project')"
+          >
+            @for (option of sortOptions; track $index) {
+              <option value="{{ option }}">{{ option | translate }}</option>
+            }
+          </select>
+        </div>
+        <div class="flex items-start justify-between mb-4">
+          <div class="stat-ring-icon bg-brand-soft text-brand">
+            <span [innerHTML]="appService.getIcon('folderGrid')"></span>
+          </div>
+          <span
+            class="text-xs font-semibold font-mono-data"
+            [class.text-danger]="projectsReport().trend == 'down'"
+            [class.text-brand]="projectsReport().trend == 'up'"
+          >
+            @if (projectsReport().period == 'daily') {
+              {{ 'Daily' | translate }}
+            } @else if (projectsReport().period == 'monthly') {
+              {{ 'Monthly' | translate }}
+            } @else if (projectsReport().period == 'yearly') {
+              {{ 'Yearly' | translate }}
+            }
+            {{ projectsReport().percentage }}%
+            @if (projectsReport().trend == 'up') {
+              <span [innerHTML]="appService.getIcon('arrowUp')"></span>
+            } @else if (projectsReport().trend == 'down') {
+              <span [innerHTML]="appService.getIcon('arrowDown')"></span>
+            }
+          </span>
+        </div>
+        <p class="text-2xl font-extrabold font-mono-data leading-none mb-1">
+          {{ projectsReport().totalProjects }}
+        </p>
+        <p class="text-lg text-brand font-semibold mb-3">{{ 'Projects' | translate }}</p>
+      </div>
+    }
+    @if (tasksReport()) {
+      <!-- Stat Card -->
+      <div class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up">
+        <div class="mb-2">
+          <select
+            id="sort-select"
+            class="text-sm font-medium bg-surface border border-border rounded-xl px-3 py-2 outline-none hover:bg-surface-2 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236B6963\' stroke-width=\'2\'%3E%3Cpath d=\'M6 9l6 6 6-6\'/%3E%3C/svg%3E')] bg-no-repeat bg-position-[inset-end_10px_center] bg-size-[14px_14px]"
+            aria-label="Sort projects"
+            (change)="orderFilter($event, 'task')"
+          >
+            @for (option of sortOptions; track $index) {
+              <option value="{{ option }}">{{ option | translate }}</option>
+            }
+          </select>
+        </div>
+        <div class="flex items-start justify-between mb-4">
+          <div class="stat-ring-icon bg-info-soft text-info">
+            <span [innerHTML]="appService.getIcon('clipboardcheck')"></span>
+          </div>
+          <span
+            class="text-xs font-semibold font-mono-data"
+            [class.text-danger]="tasksReport().trend == 'down'"
+            [class.text-brand]="tasksReport().trend == 'up'"
+          >
+            @if (tasksReport().period == 'daily') {
+              {{ 'Daily' | translate }}
+            } @else if (tasksReport().period == 'monthly') {
+              {{ 'Monthly' | translate }}
+            } @else if (tasksReport().period == 'yearly') {
+              {{ 'Yearly' | translate }}
+            }
+            {{ tasksReport().percentage }}%
+            @if (tasksReport().trend == 'up') {
+              <span [innerHTML]="appService.getIcon('arrowUp')"></span>
+            } @else if (tasksReport().trend == 'down') {
+              <span [innerHTML]="appService.getIcon('arrowDown')"></span>
+            }
+          </span>
+        </div>
+        <p class="text-2xl font-extrabold font-mono-data leading-none mb-1">
+          {{ tasksReport().totalTasks }}
+        </p>
+        <p class="text-lg text-info mb-3">{{ 'Tasks' | translate }}</p>
+      </div>
+    }
+  </section>
+  <section class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-4 stagger">
+    @if (projectsReport()) {
+      <div
+        class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up sm:col-span-2 xl:col-span-1"
+      >
+        <h2 class="text-xl font-bold">
+          {{ 'Projects Status' | translate }} ({{ projectsReport().totalProjects }})
+        </h2>
+        <apx-chart
+          [series]="ProjectStatusOptions().series!"
+          [chart]="ProjectStatusOptions().chart!"
+          [labels]="ProjectStatusOptions().labels!"
+          [legend]="ProjectStatusOptions().legend!"
+          [fill]="ProjectStatusOptions().fill!"
+          [colors]="ProjectStatusOptions().colors!"
+          [plotOptions]="ProjectStatusOptions().plotOptions!"
+        ></apx-chart>
+      </div>
+    }
+    @if (tasksReport()) {
+      <div
+        class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up sm:col-span-2 xl:col-span-1"
+      >
+        <h2 class="text-xl font-bold">
+          {{ 'Tasks Status' | translate }} ({{ tasksReport().totalTasks }})
+        </h2>
+        <apx-chart
+          [series]="TaskStatusOptions().series!"
+          [chart]="TaskStatusOptions().chart!"
+          [labels]="TaskStatusOptions().labels!"
+          [legend]="TaskStatusOptions().legend!"
+          [fill]="TaskStatusOptions().fill!"
+          [colors]="TaskStatusOptions().colors!"
+          [plotOptions]="TaskStatusOptions().plotOptions!"
+        ></apx-chart>
+      </div>
+    }
+    @if (tasksReport()) {
+      <div
+        class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up sm:col-span-2 xl:col-span-1"
+      >
+        <h2 class="text-xl font-bold">
+          {{ 'Tasks Priority' | translate }} ({{ tasksReport().totalTasks }})
+        </h2>
+        <apx-chart
+          [series]="TaskPriorityOptions().series!"
+          [chart]="TaskPriorityOptions().chart!"
+          [labels]="TaskPriorityOptions().labels!"
+          [legend]="TaskPriorityOptions().legend!"
+          [fill]="TaskPriorityOptions().fill!"
+          [colors]="TaskPriorityOptions().colors!"
+          [plotOptions]="TaskPriorityOptions().plotOptions!"
+        ></apx-chart>
+      </div>
+    }
+  </section>
+  <section class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-4 stagger">
+    <div class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up col-span-3">
+      {{"Filter By Date" | translate}}:
+      <select
+        id="sort-select"
+        class="text-sm font-medium bg-surface border border-border rounded-xl px-3 py-2 outline-none hover:bg-surface-2 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236B6963\' stroke-width=\'2\'%3E%3Cpath d=\'M6 9l6 6 6-6\'/%3E%3C/svg%3E')] bg-no-repeat bg-position-[inset-end_10px_center] bg-size-[14px_14px]"
+        aria-label="Sort projects"
+        (change)="chartFilter($event, 'user')"
+      >
+        @for (option of sortOptions; track $index) {
+          <option value="{{ option }}">{{ option | translate }}</option>
+        }
+      </select>
+    </div>
+    @if (usersChart()) {
+      <div
+        class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up sm:col-span-2 xl:col-span-1"
+      >
+        <!-- <h2>{{"Projects Status" | translate}} ({{ projectsReport().totalProjects }})</h2> -->
+        <apx-chart
+          [series]="usersChart().series!"
+          [chart]="usersChart().chart!"
+          [xaxis]="usersChart().xaxis!"
+          [plotOptions]="usersChart().plotOptions!"
+          [dataLabels]="usersChart().dataLabels!"
+          [title]="usersChart().title!"
+          [colors]="usersChart().colors!"
+          [grid]="usersChart().grid!"
+        >
+        </apx-chart>
+      </div>
+    }
+    @if (projectsChart()) {
+      <div
+        class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up sm:col-span-2 xl:col-span-1"
+      >
+        <apx-chart
+          [series]="projectsChart().series!"
+          [chart]="projectsChart().chart!"
+          [xaxis]="projectsChart().xaxis!"
+          [plotOptions]="projectsChart().plotOptions!"
+          [dataLabels]="projectsChart().dataLabels!"
+          [title]="projectsChart().title!"
+          [colors]="projectsChart().colors!"
+          [grid]="projectsChart().grid!"
+        >
+        </apx-chart>
+      </div>
+    }
+    @if (tasksChart()) {
+      <div
+        class="stat-card surface rounded-2xl card-shadow p-5 hover-lift animate-slide-up sm:col-span-2 xl:col-span-1"
+      >
+        <apx-chart
+          [series]="tasksChart().series!"
+          [chart]="tasksChart().chart!"
+          [xaxis]="tasksChart().xaxis!"
+          [plotOptions]="tasksChart().plotOptions!"
+          [dataLabels]="tasksChart().dataLabels!"
+          [title]="tasksChart().title!"
+          [colors]="tasksChart().colors!"
+          [grid]="tasksChart().grid!"
+        >
+        </apx-chart>
+      </div>
+    }
+  </section>
+</div>
